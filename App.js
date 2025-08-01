@@ -6,11 +6,13 @@
  */
 
 import React, { useEffect } from 'react';
-import { StatusBar } from 'react-native';
 import { StoreProvider, useStore } from './src/stores/StoreProvider';
 import AppNavigator from './src/navigation/AppNavigator';
 import InitializationScreen from './src/screens/InitializationScreen';
+import OnboardingScreen from './src/screens/OnboardingScreen';
 import { observer } from 'mobx-react-lite';
+import BasePage from './src/components/BasePage';
+import { StatusBarStyles } from './src/constants/StatusBarStyles';
 
 const AppContent = observer(() => {
   const { appStore } = useStore();
@@ -24,14 +26,16 @@ const AppContent = observer(() => {
     return <InitializationScreen />;
   }
 
+  // 如果还没有完成引导页，显示引导页
+  if (!appStore.hasCompletedOnboarding) {
+    return <OnboardingScreen />;
+  }
+
+  // 显示主应用
   return (
-    <>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor="#000"
-      />
+    <BasePage barStyle={StatusBarStyles.LIGHT_CONTENT}>
       <AppNavigator />
-    </>
+    </BasePage>
   );
 });
 

@@ -6,6 +6,7 @@ class AppStore {
   isInitialized = false;
   isLoading = true;
   initializationError = null;
+  hasCompletedOnboarding = false; // 新增：引导页完成状态
 
   constructor() {
     makeAutoObservable(this);
@@ -21,6 +22,10 @@ class AppStore {
 
   setError = (error) => {
     this.initializationError = error;
+  };
+
+  setOnboardingCompleted = (value) => {
+    this.hasCompletedOnboarding = value;
   };
 
   // 应用初始化
@@ -39,20 +44,25 @@ class AppStore {
         console.log('Loaded settings:', settings);
       }
 
-      // 3. 检查用户登录状态
+      // 3. 检查引导页状态
+      const onboardingStatus = await DataStorage.getText('onboarding_completed');
+      // this.setOnboardingCompleted(onboardingStatus === 'true');
+      this.setOnboardingCompleted(false);
+
+      // 4. 检查用户登录状态
       const userData = await DataStorage.getText(DataStorage.KEYS.USER_DATA);
       if (userData) {
         // 可以在这里恢复用户状态
         console.log('Loaded user data:', userData);
       }
 
-      // 4. 模拟其他初始化任务
+      // 5. 模拟其他初始化任务
       await new Promise(resolve => setTimeout(resolve, 1500));
 
       this.setInitialized(true);
       this.setLoading(false);
 
-      // 5. 隐藏启动画面
+      // 6. 隐藏启动画面
       await BootSplash.hide({ fade: true });
       console.log('App initialization completed successfully');
 
@@ -63,6 +73,20 @@ class AppStore {
       
       // 即使出错也要隐藏启动画面
       await BootSplash.hide({ fade: true });
+    }
+  };
+
+  // 完成引导页
+  completeOnboarding = async () => {
+    try {
+      // 保存引导页完成状态
+      await DataStorage.saveText('onboarding_completed', 'true');
+      this.setOnboardingCompleted(true);
+      console.log('Onboarding completed');
+    } catch (error) {
+      console.error('Failed to save onboarding status:', error);
+      // 即使保存失败也要标记为完成
+      this.setOnboardingCompleted(true);
     }
   };
 
