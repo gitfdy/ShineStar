@@ -7,6 +7,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import StorageDemoScreen from '../screens/StorageDemoScreen';
 
 // Import components
 import CustomDrawerContent from '../components/CustomDrawerContent';
@@ -50,6 +51,13 @@ const DrawerNavigator = () => {
         component={SettingsScreen}
         options={{
           title: '设置',
+        }}
+      />
+      <Drawer.Screen 
+        name="StorageDemo" 
+        component={StorageDemoScreen}
+        options={{
+          title: '数据存储演示',
         }}
       />
     </Drawer.Navigator>
