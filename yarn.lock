@@ -2634,6 +2634,11 @@ bare-stream@^2.6.4:
   dependencies:
     streamx "^2.21.0"
 
+base-64@^0.1.0:
+  version "0.1.0"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/base-64/-/base-64-0.1.0.tgz#780a99c84e7d600260361511c4877613bf24f6bb"
+  integrity sha512-Y5gU45svrR5tI2Vt/X9GPd3L0HNIKzGu202EjxrXMpuc2V2CiKgemAbUUsqYmZJvPtCXoUKjNZwBJzsNScUbXA==
+
 base64-js@^1.1.2, base64-js@^1.2.3, base64-js@^1.3.1, base64-js@^1.5.1:
   version "1.5.1"
   resolved "https://mirrors.huaweicloud.com/repository/npm/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
@@ -4272,6 +4277,11 @@ human-signals@^2.1.0:
   version "2.1.0"
   resolved "https://mirrors.huaweicloud.com/repository/npm/human-signals/-/human-signals-2.1.0.tgz#dc91fcba42e4d06e4abaed33b3e7a3c02f514ea0"
   integrity sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==
+
+hyochan-welcome@^1.0.0:
+  version "1.0.1"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/hyochan-welcome/-/hyochan-welcome-1.0.1.tgz#a949de8bc3c1e18fe096016bc273aa191c844971"
+  integrity sha512-WRZNH5grESkOXP/r7xc7TMhO9cUqxaJIuZcQDAjzHWs6viGP+sWtVbiBigxc9YVRrw3hnkESQWwzqg+oOga65A==
 
 ieee754@^1.1.13:
   version "1.2.1"
@@ -6704,6 +6714,13 @@ react-is@^17.0.1:
   resolved "https://mirrors.huaweicloud.com/repository/npm/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
+react-native-audio-recorder-player@^3.6.6:
+  version "3.6.14"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/react-native-audio-recorder-player/-/react-native-audio-recorder-player-3.6.14.tgz#1f45fed2f6f516372d0268a72e04e7e129699f79"
+  integrity sha512-F6SvHbuLvsbhBytR4+vaGIL6LFqC1cnB+SX3v191aHNvGDt63BX56w/Y19nIzxaLnG0b0vbxx/UZ1nzIvDyqWA==
+  dependencies:
+    hyochan-welcome "^1.0.0"
+
 react-native-bootsplash@^6.3.10:
   version "6.3.10"
   resolved "https://mirrors.huaweicloud.com/repository/npm/react-native-bootsplash/-/react-native-bootsplash-6.3.10.tgz#6e852cc37221c9c4bcd5308d35664c4dd676830c"
@@ -6743,6 +6760,14 @@ react-native-fast-image@8.6.3:
   version "8.6.3"
   resolved "https://mirrors.huaweicloud.com/repository/npm/react-native-fast-image/-/react-native-fast-image-8.6.3.tgz#6edc3f9190092a909d636d93eecbcc54a8822255"
   integrity sha512-Sdw4ESidXCXOmQ9EcYguNY2swyoWmx53kym2zRsvi+VeFCHEdkO+WG1DK+6W81juot40bbfLNhkc63QnWtesNg==
+
+react-native-fs@2.20.0:
+  version "2.20.0"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/react-native-fs/-/react-native-fs-2.20.0.tgz#05a9362b473bfc0910772c0acbb73a78dbc810f6"
+  integrity sha512-VkTBzs7fIDUiy/XajOSNk0XazFE9l+QlMAce7lGuebZcag5CnjszB+u4BdqzwaQOdcYb5wsJIsqq4kxInIRpJQ==
+  dependencies:
+    base-64 "^0.1.0"
+    utf8 "^3.0.0"
 
 react-native-geolocation-service@5.3.1:
   version "5.3.1"
@@ -6802,6 +6827,11 @@ react-native-share@10.2.1:
   version "10.2.1"
   resolved "https://mirrors.huaweicloud.com/repository/npm/react-native-share/-/react-native-share-10.2.1.tgz#baf94848c2acee6e52f6b28e05c47fa5fa9402be"
   integrity sha512-Z2LWGYWH7raM4H6Oauttv1tEhaB43XSWJAN8iS6oaSG9CnyrUBeYFF4QpU1AH5RgNeylXQdN8CtbizCHHt6coQ==
+
+react-native-sqlite-storage@^6.0.1:
+  version "6.0.1"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/react-native-sqlite-storage/-/react-native-sqlite-storage-6.0.1.tgz#ce6a6b852f07abbea68658d5363818c8bef45dfb"
+  integrity sha512-1tDFjrint6X6qSYKf3gDyz+XB+X79jfiL6xTugKHPRtF0WvqMtVgdLuNqZunIXjNEvNtNVEbXaeZ6MsguFu00A==
 
 react-native-svg@14.0.0:
   version "14.0.0"
@@ -7982,6 +8012,11 @@ use-sync-external-store@^1.0.0, use-sync-external-store@^1.4.0:
   version "1.5.0"
   resolved "https://mirrors.huaweicloud.com/repository/npm/use-sync-external-store/-/use-sync-external-store-1.5.0.tgz#55122e2a3edd2a6c106174c27485e0fd59bcfca0"
   integrity sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A==
+
+utf8@^3.0.0:
+  version "3.0.0"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/utf8/-/utf8-3.0.0.tgz#f052eed1364d696e769ef058b183df88c87f69d1"
+  integrity sha512-E8VjFIQ/TyQgp+TZfS6l8yp/xWppSAHzidGiRrqe4bK4XP9pTRyKFgGJpO3SN7zdX4DeomTrwaseCHovfpFcqQ==
 
 util-deprecate@^1.0.1, util-deprecate@~1.0.1:
   version "1.0.2"

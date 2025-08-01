@@ -61,7 +61,6 @@ allprojects {
         // 网易镜像
         maven { url 'https://mirrors.163.com/maven/repository/maven-public/' }
 
-
         // 保留中央仓库
         mavenCentral()
 

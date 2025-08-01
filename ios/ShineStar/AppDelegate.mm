@@ -1,6 +1,7 @@
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
+#import "RNBootSplash.h"
 
 @implementation AppDelegate
 
@@ -21,6 +22,13 @@
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
+}
+
+// override this method
+- (void)customize:(RCTRootView *)rootView
+{
+  [super customize:rootView];
+  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
 }
 
 @end
