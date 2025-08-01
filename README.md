@@ -1,79 +1,116 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# ShineStar
 
-# Getting Started
+一个使用 React Native 开发的移动应用，具有抽屉导航和 MobX 状态管理功能。
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## 功能特性
 
-## Step 1: Start the Metro Server
+- 📱 **React Native** - 跨平台移动应用开发
+- 🧭 **抽屉导航** - 使用 React Navigation Drawer
+- 🏪 **状态管理** - 使用 MobX 进行状态管理
+- 🌙 **深色主题** - 始终使用深色模式
+- 👤 **用户管理** - 用户登录/登出功能
+- ⚙️ **设置页面** - 应用设置管理
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+## 技术栈
 
-To start Metro, run the following command from the _root_ of your React Native project:
+- **React Native** 0.72.7
+- **React Navigation** 6.x
+- **MobX** 6.13.7
+- **React Native Reanimated** 3.5.4
+- **React Native Gesture Handler** 2.13.4
 
-```bash
-# using npm
-npm start
+## 项目结构
 
-# OR using Yarn
-yarn start
+```
+src/
+├── components/          # 可复用组件
+│   └── CustomDrawerContent.js
+├── navigation/          # 导航配置
+│   └── AppNavigator.js
+├── screens/            # 页面组件
+│   ├── HomeScreen.js
+│   ├── ProfileScreen.js
+│   └── SettingsScreen.js
+├── stores/             # MobX 状态管理
+│   ├── RootStore.js
+│   ├── UserStore.js
+│   ├── SettingsStore.js
+│   └── StoreProvider.js
+└── utils/              # 工具函数
+    └── storage.js
 ```
 
-## Step 2: Start your Application
+## 安装和运行
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+### 环境要求
 
-### For Android
+- Node.js >= 16
+- React Native CLI
+- Xcode (iOS)
+- Android Studio (Android)
+
+### 安装依赖
 
 ```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
+npm install
+# 或者
+yarn install
 ```
 
-### For iOS
+### iOS 运行
 
 ```bash
-# using npm
+cd ios && pod install && cd ..
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+### Android 运行
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+```bash
+npm run android
+```
 
-## Step 3: Modifying your App
+## 主要功能
 
-Now that you have successfully run the app, let's modify it.
+### 1. 抽屉导航
+- 自定义抽屉内容组件
+- 用户信息显示
+- 导航菜单
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+### 2. 状态管理
+- 用户状态管理 (UserStore)
+- 应用设置管理 (SettingsStore)
+- 响应式状态更新
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+### 3. 页面功能
+- **首页** - 欢迎页面和用户信息显示
+- **个人资料** - 用户登录/登出功能
+- **设置** - 应用设置管理（深色模式、通知等）
 
-## Congratulations! :tada:
+## 开发说明
 
-You've successfully run and modified your React Native App. :partying_face:
+### 从 TypeScript 转换
+本项目已从 TypeScript 完全转换为 JavaScript，移除了所有类型注解和接口定义，保持了完整的功能性。
 
-### Now what?
+### 状态管理
+使用 MobX 进行状态管理，通过 `useStore()` hook 在组件中访问状态：
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+```javascript
+import { useStore } from '../stores/StoreProvider';
 
-# Troubleshooting
+const { userStore, settingsStore } = useStore();
+```
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+### 导航
+使用 React Navigation 的 Drawer Navigator，支持：
+- 抽屉导航
+- 自定义抽屉内容
+- 页面间导航
 
-# Learn More
+## 贡献
 
-To learn more about React Native, take a look at the following resources:
+欢迎提交 Issue 和 Pull Request！
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## 许可证
+
+MIT License
