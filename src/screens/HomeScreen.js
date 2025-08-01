@@ -1,44 +1,53 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '../stores/StoreProvider';
+import BasePage from '../components/BasePage';
+import { StatusBarStyles } from '../constants/StatusBarStyles';
+import theme from '../styles/theme';
 
-const HomeScreen = () => {
+const HomeScreen = observer(() => {
   const { userStore } = useStore();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <BasePage 
+      barStyle={StatusBarStyles.DARK_CONTENT}
+      style={styles.container}
+    >
       <View style={styles.content}>
-        <Text style={styles.title}>欢迎来到 ShineStar</Text>
+        <Text style={styles.title}>欢迎回到 ShineStar</Text>
         <Text style={styles.subtitle}>
-          用户: {userStore.userName || '未登录'}
+          开始您的语音转录之旅
         </Text>
       </View>
-    </SafeAreaView>
+    </BasePage>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: theme.colors.neutral.background,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    paddingHorizontal: theme.spacing.lg,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 10,
+    color: theme.colors.neutral.black,
+    marginBottom: theme.spacing.sm,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
-    color: '#888',
+    color: theme.colors.neutral.darkGray,
+    textAlign: 'center',
+    lineHeight: 24,
   },
 });
 
-export default observer(HomeScreen); 
+export default HomeScreen; 
