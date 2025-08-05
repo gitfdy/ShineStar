@@ -101,6 +101,12 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    
+    // 添加Dexing配置
+    dexOptions {
+        javaMaxHeapSize "4g"
+        preDexLibraries = false
+    }
 }
 
 dependencies {
@@ -117,6 +123,19 @@ dependencies {
         implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
+    }
+    
+    // OkHttp for Google Cloud Speech API
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    
+    // 解决Kotlin版本冲突
+    constraints {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {
+            because "kotlin-stdlib-jdk7 is now a part of kotlin-stdlib"
+        }
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0") {
+            because "kotlin-stdlib-jdk8 is now a part of kotlin-stdlib"
+        }
     }
 }
 

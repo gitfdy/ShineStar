@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,87 +6,124 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
+  Animated,
 } from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {useStore} from '../stores/StoreProvider';
 import theme from '../styles/theme';
 import BasePage from '../components/BasePage';
-import { StatusBarStyles } from '../constants/StatusBarStyles';
-import Animated, {
-  useSharedValue,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  interpolate,
-  runOnJS,
-  withTiming,
-  Easing,
-  useDerivedValue,
-} from 'react-native-reanimated';
+import {StatusBarStyles} from '../constants/StatusBarStyles';
+import {useTranslation} from 'react-i18next';
+import LanguageSelector from '../components/LanguageSelector';
 
 const {width, height} = Dimensions.get('window');
 
 const OnboardingScreen = observer(() => {
   const {appStore} = useStore();
+  const {t} = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const scrollRef = useRef(null);
-  const scrollX = useSharedValue(0);
-  const fadeOpacity = useSharedValue(1);
-  const textOpacity = useSharedValue(1);
-  const textTranslateY = useSharedValue(0);
-  const currentStepValue = useSharedValue(0);
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const fadeOpacity = useRef(new Animated.Value(1)).current;
+  const textOpacity = useRef(new Animated.Value(1)).current;
+  const textTranslateX = useRef(new Animated.Value(0)).current;
+  const textScale = useRef(new Animated.Value(1)).current;
+  const cursorOpacity = useRef(new Animated.Value(1)).current;
+  const [displayedText, setDisplayedText] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const typingRef = useRef(null);
+  const currentIndexRef = useRef(0);
+
+  // 初始化打字效果
+  useEffect(() => {
+    startTypingEffect();
+    
+    // 清理函数
+    return () => {
+      if (typingRef.current) {
+        clearInterval(typingRef.current);
+      }
+    };
+  }, []);
 
   const onboardingSteps = [
     {
       id: 0,
-      title: '欢迎来到 ShineStar',
-      subtitle: '将语音转录为文本，快速、轻松、无忧地获取即时笔记！',
-      buttonText: '开始使用',
+      title: t('onboarding.step1.title'),
+      subtitle: t('onboarding.step1.subtitle'),
+      buttonText: t('onboarding.step1.buttonText'),
       showRadialMenu: true,
     },
     {
       id: 1,
-      title: '立即录音与转录',
-      subtitle: '准确的转录，带时间戳和说话者识别',
-      buttonText: '继续',
+      title: t('onboarding.step2.title'),
+      subtitle: t('onboarding.step2.subtitle'),
+      buttonText: t('onboarding.step2.buttonText'),
       showWaveform: true,
     },
     {
       id: 2,
-      title: '将数小时总结为数分钟',
-      subtitle: '一键获取自动摘要、行动项目和关键主题见解！',
-      buttonText: '继续',
+      title: t('onboarding.step3.title'),
+      subtitle: t('onboarding.step3.subtitle'),
+      buttonText: t('onboarding.step3.buttonText'),
       showSummary: true,
     },
     {
       id: 3,
-      title: '与您的笔记进行 AI 聊天',
-      subtitle: '询问任何问题，从您的转录中通过AI驱动的聊天立即获取答案',
-      buttonText: '开始体验',
+      title: t('onboarding.step4.title'),
+      subtitle: t('onboarding.step4.subtitle'),
+      buttonText: t('onboarding.step4.buttonText'),
       showAIChat: true,
     },
   ];
 
   const handleNext = () => {
+    console.log('Button clicked! Current step:', currentStep);
     if (currentStep < onboardingSteps.length - 1) {
       const nextIndex = currentStep + 1;
 
-      // 淡出动画
-      fadeOpacity.value = withTiming(
-        0,
-        {
-          duration: 200,
-          easing: Easing.out(Easing.ease),
-        },
-        () => {
+              // 优雅的按钮点击动画
+        Animated.sequence([
+          Animated.timing(fadeOpacity, {
+            toValue: 0.3,
+            duration: 150,
+            useNativeDriver: true,
+          }),
+          Animated.timing(fadeOpacity, {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+        ]).start(() => {
           // 动画完成后更新步骤
-          runOnJS(setCurrentStep)(nextIndex);
-          // 淡入动画
-          fadeOpacity.value = withTiming(1, {
-            duration: 300,
-            easing: Easing.in(Easing.ease),
+          setCurrentStep(nextIndex);
+          // 优雅的 fadeIn 动画
+          Animated.parallel([
+            Animated.timing(fadeOpacity, {
+              toValue: 1,
+              duration: 400,
+              useNativeDriver: true,
+            }),
+            Animated.timing(textOpacity, {
+              toValue: 1,
+              duration: 400,
+              useNativeDriver: true,
+            }),
+            Animated.timing(textTranslateX, {
+              toValue: 0,
+              duration: 400,
+              useNativeDriver: true,
+            }),
+            Animated.timing(textScale, {
+              toValue: 1,
+              duration: 400,
+              useNativeDriver: true,
+            }),
+          ]).start(() => {
+            // 开始打字效果
+            startTypingEffect();
           });
-        },
-      );
+        });
 
       scrollRef.current?.scrollTo({
         x: nextIndex * width,
@@ -98,29 +135,99 @@ const OnboardingScreen = observer(() => {
     }
   };
 
- 
-
- 
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollX.value = event.contentOffset.x;
-    },
-  });
-
-  const handleScroll = (event) => {
-    scrollX.value = event.nativeEvent.contentOffset.x;
-    const index = Math.round(event.nativeEvent.contentOffset.x / width);
+  const handleScroll = event => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    scrollX.setValue(offsetX);
+    const index = Math.round(offsetX / width);
     if (index !== currentStep) {
-      // 触发文字动画
-      textOpacity.value = withTiming(0, { duration: 200 }, () => {
-        runOnJS(setCurrentStep)(index);
-        currentStepValue.value = index;
-        textOpacity.value = withTiming(1, { duration: 300 });
-        textTranslateY.value = withTiming(0, { duration: 300 });
+      // 触发文字动画 - 优雅的 fadeOut/fadeIn 效果
+      Animated.parallel([
+        Animated.timing(textOpacity, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(textTranslateX, {
+          toValue: -30,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setCurrentStep(index);
+        // 优雅的 fadeIn 动画
+        Animated.parallel([
+          Animated.timing(textOpacity, {
+            toValue: 1,
+            duration: 400,
+            useNativeDriver: true,
+          }),
+          Animated.timing(textTranslateX, {
+            toValue: 0,
+            duration: 400,
+            useNativeDriver: true,
+          }),
+        ]).start(() => {
+          // 开始打字效果
+          startTypingEffect();
+        });
       });
-      textTranslateY.value = withTiming(20, { duration: 200 });
     }
   };
+
+  const startTypingEffect = () => {
+    const currentStepData = onboardingSteps[currentStep];
+    const fullText = currentStepData.subtitle;
+    
+    // 清除之前的定时器
+    if (typingRef.current) {
+      clearInterval(typingRef.current);
+    }
+    
+    // 停止之前的动画
+    cursorOpacity.stopAnimation();
+    setDisplayedText('');
+    setIsTyping(true);
+    currentIndexRef.current = 0;
+    
+    // 开始光标闪烁动画
+    const cursorAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(cursorOpacity, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(cursorOpacity, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    cursorAnimation.start();
+    
+    const typeInterval = setInterval(() => {
+      if (currentIndexRef.current < fullText.length) {
+        setDisplayedText(fullText.slice(0, currentIndexRef.current + 1));
+        currentIndexRef.current++;
+      } else {
+        clearInterval(typeInterval);
+        setIsTyping(false);
+        cursorAnimation.stop();
+        cursorOpacity.setValue(0); // 隐藏光标
+        typingRef.current = null;
+      }
+    }, 60);
+    
+    typingRef.current = typeInterval;
+  };
+
+  // 监听语言变化，重新开始打字效果
+  useEffect(() => {
+    if (!isTyping) {
+      startTypingEffect();
+    }
+  }, [t]);
 
   const renderRadialMenu = () => (
     <View style={styles.radialContainer}>
@@ -264,43 +371,68 @@ const OnboardingScreen = observer(() => {
     );
   };
 
-  const renderMiddleText = () => {
-    const currentStepData = onboardingSteps[currentStep];
-    console.log('currentStep->', currentStep);
-
-    // 使用 withTiming 的动画样式
-    const fadeStyle = useAnimatedStyle(() => {
-      return {
-        opacity: textOpacity.value,
-        transform: [{ translateY: textTranslateY.value }],
-      };
-    });
-
-    return (
-      <Animated.View style={[styles.middleSection, fadeStyle]}>
-        <Text style={styles.title}>{currentStepData.title}</Text>
-        <Text style={styles.subtitle}>{currentStepData.subtitle}</Text>
-      </Animated.View>
-    );
-  };
-
-  const renderBottomButton = () => {
+  const renderBottomContent = () => {
     const currentStepData = onboardingSteps[currentStep];
 
-    const buttonFadeStyle = useAnimatedStyle(() => {
-      return {
-        opacity: fadeOpacity.value,
-      };
-    });
-
     return (
-      <Animated.View style={[styles.bottomSection, buttonFadeStyle]}>
-        <TouchableOpacity style={styles.primaryButton} onPress={handleNext}>
-          <Text style={styles.primaryButtonText}>
-            {currentStepData.buttonText}
-          </Text>
-        </TouchableOpacity>
-      </Animated.View>
+      <View style={styles.bottomContentContainer}>
+        {/* 文字区域 */}
+        <Animated.View 
+          style={[
+            styles.textContainer,
+            {
+              opacity: textOpacity,
+              transform: [
+                {translateX: textTranslateX},
+                {scale: textScale},
+              ],
+            }
+          ]}
+        >
+          <Text style={styles.bottomTitle}>{currentStepData.title}</Text>
+          <View style={styles.subtitleContainer}>
+            <Text style={styles.bottomSubtitle}>
+              {displayedText}
+            </Text>
+            {isTyping && (
+              <Animated.View 
+                style={[
+                  styles.cursor,
+                  {
+                    opacity: cursorOpacity,
+                  }
+                ]}
+              />
+            )}
+          </View>
+        </Animated.View>
+
+        {/* 按钮区域 */}
+        <Animated.View 
+          style={[
+            styles.buttonContainer,
+            {
+              opacity: fadeOpacity,
+              transform: [
+                {scale: fadeOpacity.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.9, 1],
+                })},
+              ],
+            }
+          ]}
+        >
+          <TouchableOpacity 
+            style={styles.smallButton} 
+            onPress={handleNext}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.smallButtonText}>
+              {currentStepData.buttonText}
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
     );
   };
 
@@ -308,7 +440,6 @@ const OnboardingScreen = observer(() => {
     return (
       <View key={index} style={styles.stepContainer}>
         {renderTopContent(index)}
-       
       </View>
     );
   };
@@ -316,40 +447,49 @@ const OnboardingScreen = observer(() => {
   // 动画指示器
   const renderAnimatedIndicators = () => {
     return (
-      <View style={styles.indicators}>
+      <View style={styles.indicatorsContainer}>
         {onboardingSteps.map((_, index) => {
-          const animatedStyle = useAnimatedStyle(() => {
-            const input = scrollX.value;
-            const inputRange = [
-              (index - 1) * width,
-              index * width,
-              (index + 1) * width,
-            ];
+          const width = scrollX.interpolate({
+            inputRange: [
+              (index - 1) * Dimensions.get('window').width,
+              index * Dimensions.get('window').width,
+              (index + 1) * Dimensions.get('window').width,
+            ],
+            outputRange: [20, 40, 20],
+            extrapolate: 'clamp',
+          });
 
-            const scale = interpolate(
-              input,
-              inputRange,
-              [0.8, 1.2, 0.8],
-              'clamp',
-            );
+          const opacity = scrollX.interpolate({
+            inputRange: [
+              (index - 1) * Dimensions.get('window').width,
+              index * Dimensions.get('window').width,
+              (index + 1) * Dimensions.get('window').width,
+            ],
+            outputRange: [0.3, 1, 0.3],
+            extrapolate: 'clamp',
+          });
 
-            const opacity = interpolate(
-              input,
-              inputRange,
-              [0.4, 1, 0.4],
-              'clamp',
-            );
-
-            return {
-              transform: [{scale}],
-              opacity,
-            };
+          const scale = scrollX.interpolate({
+            inputRange: [
+              (index - 1) * Dimensions.get('window').width,
+              index * Dimensions.get('window').width,
+              (index + 1) * Dimensions.get('window').width,
+            ],
+            outputRange: [0.8, 1.2, 0.8],
+            extrapolate: 'clamp',
           });
 
           return (
             <Animated.View
               key={index}
-              style={[styles.indicator, animatedStyle]}
+              style={[
+                styles.lineIndicator, 
+                {
+                  width,
+                  opacity,
+                  transform: [{scale}],
+                }
+              ]}
             />
           );
         })}
@@ -358,10 +498,7 @@ const OnboardingScreen = observer(() => {
   };
 
   return (
-    <BasePage 
-      barStyle={StatusBarStyles.DARK_CONTENT}
-      style={styles.container}
-    >
+    <BasePage barStyle={StatusBarStyles.DARK_CONTENT} style={styles.container}>
       {/* 顶部内容区域 - 正常切换 */}
       <ScrollView
         ref={scrollRef}
@@ -370,19 +507,33 @@ const OnboardingScreen = observer(() => {
         showsHorizontalScrollIndicator={false}
         onScroll={handleScroll}
         scrollEventThrottle={16}
+        style={{flex: 1, backgroundColor: 'transparent'}}
         contentContainerStyle={styles.scrollContent}>
         {onboardingSteps.map((_, index) => renderStep(index))}
       </ScrollView>
 
-      {/* 中间文字区域 - 淡入淡出动画
-      {renderMiddleText()} */}
-       {renderMiddleText()}
-
-      {/* 底部按钮区域 - 只修改文本 */}
-      {renderBottomButton()}
-
-      {/* 动画指示器 */}
-      {renderAnimatedIndicators()}
+      {/* 底部文字和按钮区域 */}
+      <View 
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 10,
+          paddingHorizontal: theme.spacing.lg,
+          paddingBottom: theme.spacing.xl,
+          height: 200, // 固定高度
+        }}
+        pointerEvents="box-none"
+      >
+        <View pointerEvents="box-none" style={{flex: 1}} />
+        <View pointerEvents="auto" style={{height: 100}}>
+          <View style={{marginBottom: theme.spacing.md}}>
+            {renderAnimatedIndicators()}
+          </View>
+          {renderBottomContent()}
+        </View>
+      </View>
     </BasePage>
   );
 });
@@ -408,18 +559,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.lg,
   },
 
-  // 中间文字区域
-  middleSection: {
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.lg,
-    alignItems: 'center',
+  // 底部内容容器
+  bottomContentContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    height: 80, // 固定高度
   },
 
-  // 底部按钮区域
-  bottomSection: {
-    paddingHorizontal: theme.spacing.lg,
-    paddingBottom: theme.spacing.xl,
+  // 文字容器
+  textContainer: {
+    flex: 1,
+    marginRight: theme.spacing.md,
+    justifyContent: 'flex-start',
   },
+
+  // 按钮容器
+  buttonContainer: {
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+  },
+
+
 
   // 径向菜单样式
   radialContainer: {
@@ -645,19 +806,30 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // 文字样式
-  title: {
-    fontSize: 24,
+  // 底部文字样式
+  bottomTitle: {
+    fontSize: 20,
     fontWeight: 'bold',
     color: theme.colors.neutral.black,
-    textAlign: 'center',
-    marginBottom: theme.spacing.sm,
+    textAlign: 'left',
+    marginBottom: theme.spacing.xs,
   },
-  subtitle: {
-    fontSize: 16,
+  subtitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
+  bottomSubtitle: {
+    fontSize: 14,
     color: theme.colors.neutral.darkGray,
-    textAlign: 'center',
-    lineHeight: 24,
+    textAlign: 'left',
+    lineHeight: 20,
+  },
+  cursor: {
+    width: 2,
+    height: 16,
+    backgroundColor: theme.colors.primary,
+    marginLeft: 2,
+    borderRadius: 1,
   },
 
   // 按钮样式
@@ -678,6 +850,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  smallButton: {
+    backgroundColor: theme.colors.primary,
+    borderRadius: 8,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  smallButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
   skipButton: {
     alignItems: 'center',
     paddingVertical: theme.spacing.sm,
@@ -687,22 +875,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
-  // 指示器样式
-  indicators: {
+
+  indicatorsContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    paddingBottom: theme.spacing.lg,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    justifyContent: 'flex-start',
   },
-  indicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: theme.colors.neutral.lightGray,
-    marginHorizontal: 4,
+  lineIndicator: {
+    height: 3,
+    borderRadius: 1.5,
+    backgroundColor: theme.colors.primary,
+    marginRight: 8,
   },
 });
 

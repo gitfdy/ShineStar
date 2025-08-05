@@ -13,11 +13,19 @@ import OnboardingScreen from './src/screens/OnboardingScreen';
 import { observer } from 'mobx-react-lite';
 import BasePage from './src/components/BasePage';
 import { StatusBarStyles } from './src/constants/StatusBarStyles';
+import './src/i18n/index.js';
+import { initializeLanguage, useSystemLanguage } from './src/utils/languageUtils';
 
 const AppContent = observer(() => {
   const { appStore } = useStore();
+  
+  // 监听系统语言变化
+  useSystemLanguage();
 
   useEffect(() => {
+    // 初始化语言设置
+    initializeLanguage();
+    // 初始化应用
     appStore.initializeApp();
   }, []);
 

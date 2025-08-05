@@ -8,6 +8,8 @@ import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import StorageDemoScreen from '../screens/StorageDemoScreen';
+import VoiceToTextScreen from '../screens/VoiceToTextScreen';
+import IntegratedSpeechScreen from '../screens/IntegratedSpeechScreen';
 
 // Import components
 import CustomDrawerContent from '../components/CustomDrawerContent';
@@ -58,6 +60,20 @@ const DrawerNavigator = () => {
         component={StorageDemoScreen}
         options={{
           title: '数据存储演示',
+        }}
+      />
+      <Drawer.Screen 
+        name="VoiceToText" 
+        component={VoiceToTextScreen}
+        options={{
+          title: '语音转文字',
+        }}
+      />
+      <Drawer.Screen 
+        name="IntegratedSpeech" 
+        component={IntegratedSpeechScreen}
+        options={{
+          title: '集成语音识别',
         }}
       />
     </Drawer.Navigator>
