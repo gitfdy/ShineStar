@@ -18,9 +18,6 @@ import { initializeLanguage, useSystemLanguage } from './src/utils/languageUtils
 
 const AppContent = observer(() => {
   const { appStore } = useStore();
-  
-  // 监听系统语言变化
-  useSystemLanguage();
 
   useEffect(() => {
     // 初始化语言设置

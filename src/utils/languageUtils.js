@@ -54,18 +54,10 @@ export const initializeLanguage = () => {
 // Hook for listening to system language changes
 export const useSystemLanguage = () => {
   useEffect(() => {
-    const handleLanguageChange = () => {
-      const systemLanguage = getSystemLanguage();
-      if (i18n.language !== systemLanguage) {
-        i18n.changeLanguage(systemLanguage);
-      }
-    };
-
-    // 监听系统语言变化
-    RNLocalize.addEventListener('change', handleLanguageChange);
-
-    return () => {
-      RNLocalize.removeEventListener('change', handleLanguageChange);
-    };
+    // 初始化时设置系统语言
+    const systemLanguage = getSystemLanguage();
+    if (i18n.language !== systemLanguage) {
+      i18n.changeLanguage(systemLanguage);
+    }
   }, []);
 }; 
