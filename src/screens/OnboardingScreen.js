@@ -14,9 +14,8 @@ import theme from '../styles/theme';
 import BasePage from '../components/BasePage';
 import {StatusBarStyles} from '../constants/StatusBarStyles';
 import {useTranslation} from 'react-i18next';
-import LanguageSelector from '../components/LanguageSelector';
 
-const {width, height} = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
 const OnboardingScreen = observer(() => {
   const {appStore} = useStore();
@@ -67,14 +66,7 @@ const OnboardingScreen = observer(() => {
       subtitle: t('onboarding.step3.subtitle'),
       buttonText: t('onboarding.step3.buttonText'),
       showSummary: true,
-    },
-    {
-      id: 3,
-      title: t('onboarding.step4.title'),
-      subtitle: t('onboarding.step4.subtitle'),
-      buttonText: t('onboarding.step4.buttonText'),
-      showAIChat: true,
-    },
+    }
   ];
 
   const handleNext = () => {
@@ -217,7 +209,7 @@ const OnboardingScreen = observer(() => {
         cursorOpacity.setValue(0); // 隐藏光标
         typingRef.current = null;
       }
-    }, 60);
+    }, 30);
     
     typingRef.current = typeInterval;
   };
@@ -257,24 +249,6 @@ const OnboardingScreen = observer(() => {
 
   const renderWaveform = () => (
     <View style={styles.waveformContainer}>
-      <View style={styles.waveform}>
-        {[...Array(20)].map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.waveformBar,
-              {
-                height: Math.random() * 40 + 10,
-                backgroundColor:
-                  index < 10
-                    ? theme.colors.primary
-                    : theme.colors.neutral.lightGray,
-              },
-            ]}
-          />
-        ))}
-      </View>
-
       <View style={styles.transcriptionArea}>
         <View style={styles.transcriptionBubble}>
           <Text style={styles.speakerText}>演讲者1 0:10</Text>
@@ -300,14 +274,6 @@ const OnboardingScreen = observer(() => {
         </View>
         <View style={styles.summaryContent}>
           <Text style={styles.summaryLabel}>教程录制</Text>
-          <View style={styles.miniWaveform}>
-            {[...Array(15)].map((_, index) => (
-              <View
-                key={index}
-                style={[styles.miniBar, {height: Math.random() * 20 + 5}]}
-              />
-            ))}
-          </View>
         </View>
       </View>
 
@@ -325,38 +291,6 @@ const OnboardingScreen = observer(() => {
     </View>
   );
 
-  const renderAIChat = () => (
-    <View style={styles.aiChatContainer}>
-      <View style={styles.aiChatCard}>
-        <View style={styles.aiChatHeader}>
-          <Text style={styles.aiChatTitle}>AI 聊天</Text>
-        </View>
-        <Text style={styles.aiChatContent}>
-          本周的任务是完成项目设置。任务包括：
-        </Text>
-        <View style={styles.taskList}>
-          <Text style={styles.taskItem}>1. 安装必要的工具和软件</Text>
-          <Text style={styles.taskItem}>2. 为即将到来的工作配置您的环境</Text>
-          <Text style={styles.taskItem}>3. 确保一切都已正确设置</Text>
-        </View>
-      </View>
-
-      <View style={styles.questionBubbles}>
-        <TouchableOpacity style={styles.questionBubble}>
-          <Text style={styles.questionText}>推荐的行动?</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.questionBubble}>
-          <Text style={styles.questionText}>分配了哪些任务?</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.questionBubble}>
-          <Text style={styles.questionText}>有哪些先决条件?</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.questionBubble}>
-          <Text style={styles.questionText}>提到了哪些关键步骤?</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
 
   const renderTopContent = index => {
     const currentStepData = onboardingSteps[index];
@@ -366,7 +300,6 @@ const OnboardingScreen = observer(() => {
         {currentStepData.showRadialMenu && renderRadialMenu()}
         {currentStepData.showWaveform && renderWaveform()}
         {currentStepData.showSummary && renderSummary()}
-        {currentStepData.showAIChat && renderAIChat()}
       </View>
     );
   };
@@ -645,17 +578,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
-  waveform: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    height: 60,
-    marginBottom: theme.spacing.lg,
-  },
-  waveformBar: {
-    width: 3,
-    marginHorizontal: 1,
-    borderRadius: 2,
-  },
   transcriptionArea: {
     width: '100%',
   },
@@ -716,17 +638,7 @@ const styles = StyleSheet.create({
     color: theme.colors.neutral.black,
     marginBottom: theme.spacing.sm,
   },
-  miniWaveform: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    height: 30,
-  },
-  miniBar: {
-    width: 2,
-    backgroundColor: theme.colors.neutral.black,
-    marginHorizontal: 1,
-    borderRadius: 1,
-  },
+
   summaryButtons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -832,24 +744,7 @@ const styles = StyleSheet.create({
     borderRadius: 1,
   },
 
-  // 按钮样式
-  primaryButton: {
-    backgroundColor: theme.colors.primary,
-    borderRadius: 12,
-    paddingVertical: theme.spacing.md,
-    alignItems: 'center',
-    marginBottom: theme.spacing.md,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  primaryButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
+
   smallButton: {
     backgroundColor: theme.colors.primary,
     borderRadius: 8,
@@ -866,14 +761,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  skipButton: {
-    alignItems: 'center',
-    paddingVertical: theme.spacing.sm,
-  },
-  skipButtonText: {
-    color: theme.colors.neutral.gray,
-    fontSize: 14,
-  },
+
 
 
   indicatorsContainer: {

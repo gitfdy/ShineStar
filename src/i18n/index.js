@@ -20,11 +20,6 @@ const zhCN = {
       subtitle: '一键获取自动摘要、行动项目和关键主题见解！',
       buttonText: '继续',
     },
-    step4: {
-      title: '与您的笔记进行 AI 聊天',
-      subtitle: '询问任何问题，从您的转录中通过AI驱动的聊天立即获取答案',
-      buttonText: '开始体验',
-    },
   },
   common: {
     skip: '跳过',
@@ -48,11 +43,6 @@ const enUS = {
       title: 'Summarize Hours into Minutes',
       subtitle: 'Get automatic summaries, action items, and key insights with one click!',
       buttonText: 'Continue',
-    },
-    step4: {
-      title: 'Chat with AI About Your Notes',
-      subtitle: 'Ask any question and get instant answers from your transcriptions through AI-powered chat',
-      buttonText: 'Start Experience',
     },
   },
   common: {
