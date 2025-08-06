@@ -4,19 +4,19 @@ import { observer } from 'mobx-react-lite';
 import { useStore } from '../stores/StoreProvider';
 import BasePage from '../components/BasePage';
 import { StatusBarStyles } from '../constants/StatusBarStyles';
-import theme from '../styles/theme';
+import {lightTheme} from '../styles/theme';
 
 const HomeScreen = observer(() => {
-  const { userStore } = useStore();
+  const { userStore, themeStore } = useStore();
 
   return (
     <BasePage 
-      barStyle={StatusBarStyles.DARK_CONTENT}
-      style={styles.container}
+      barStyle={themeStore?.statusBarStyle || 'dark-content'}
+      style={[styles.container, {backgroundColor: themeStore?.currentTheme?.colors?.neutral?.background || '#F2F2F7'}]}
     >
       <View style={styles.content}>
-        <Text style={styles.title}>欢迎回到 ShineStar</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, {color: themeStore?.currentTheme?.colors?.neutral?.black || '#000000'}]}>欢迎回到 ShineStar</Text>
+        <Text style={[styles.subtitle, {color: themeStore?.currentTheme?.colors?.neutral?.darkGray || '#1C1C1E'}]}>
           开始您的语音转录之旅
         </Text>
       </View>
@@ -27,24 +27,21 @@ const HomeScreen = observer(() => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral.background,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing.lg,
+    paddingHorizontal: lightTheme.spacing.lg,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: theme.colors.neutral.black,
-    marginBottom: theme.spacing.sm,
+    marginBottom: lightTheme.spacing.sm,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
-    color: theme.colors.neutral.darkGray,
     textAlign: 'center',
     lineHeight: 24,
   },

@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
  * @param {boolean} props.useSafeArea - 是否使用 SafeAreaView，默认为 true
  */
 const BasePage = ({
-  barStyle = 'default',
+  barStyle = 'dark-content',
   backgroundColor = 'transparent',
   translucent = true,
   style,

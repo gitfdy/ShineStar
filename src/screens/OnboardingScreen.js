@@ -10,15 +10,16 @@ import {
 } from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {useStore} from '../stores/StoreProvider';
-import theme from '../styles/theme';
+import {lightTheme} from '../styles/theme';
 import BasePage from '../components/BasePage';
 import {StatusBarStyles} from '../constants/StatusBarStyles';
 import {useTranslation} from 'react-i18next';
+import LottieView from 'lottie-react-native';
 
-const {width} = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 const OnboardingScreen = observer(() => {
-  const {appStore} = useStore();
+  const {appStore, themeStore} = useStore();
   const {t} = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const scrollRef = useRef(null);
@@ -32,11 +33,12 @@ const OnboardingScreen = observer(() => {
   const [isTyping, setIsTyping] = useState(false);
   const typingRef = useRef(null);
   const currentIndexRef = useRef(0);
+  const animationRef = useRef(null);
 
   // 初始化打字效果
   useEffect(() => {
-    startTypingEffect();
-    
+    startTypingEffect(currentStep);
+
     // 清理函数
     return () => {
       if (typingRef.current) {
@@ -51,22 +53,29 @@ const OnboardingScreen = observer(() => {
       title: t('onboarding.step1.title'),
       subtitle: t('onboarding.step1.subtitle'),
       buttonText: t('onboarding.step1.buttonText'),
-      showRadialMenu: true,
+      showWelcome: true,
     },
     {
       id: 1,
       title: t('onboarding.step2.title'),
       subtitle: t('onboarding.step2.subtitle'),
       buttonText: t('onboarding.step2.buttonText'),
-      showWaveform: true,
+      showRecord: true,
     },
     {
       id: 2,
       title: t('onboarding.step3.title'),
       subtitle: t('onboarding.step3.subtitle'),
       buttonText: t('onboarding.step3.buttonText'),
-      showSummary: true,
-    }
+      showDataSafe: true,
+    },
+    {
+      id: 3,
+      title: t('onboarding.step4.title'),
+      subtitle: t('onboarding.step4.subtitle'),
+      buttonText: t('onboarding.step4.buttonText'),
+      showEmpower: true,
+    },
   ];
 
   const handleNext = () => {
@@ -74,48 +83,48 @@ const OnboardingScreen = observer(() => {
     if (currentStep < onboardingSteps.length - 1) {
       const nextIndex = currentStep + 1;
 
-              // 优雅的按钮点击动画
-        Animated.sequence([
+      // 优雅的按钮点击动画
+      Animated.sequence([
+        Animated.timing(fadeOpacity, {
+          toValue: 0.3,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeOpacity, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        // 动画完成后更新步骤
+        setCurrentStep(nextIndex);
+        // 优雅的 fadeIn 动画
+        Animated.parallel([
           Animated.timing(fadeOpacity, {
-            toValue: 0.3,
-            duration: 150,
+            toValue: 1,
+            duration: 400,
             useNativeDriver: true,
           }),
-          Animated.timing(fadeOpacity, {
+          Animated.timing(textOpacity, {
+            toValue: 1,
+            duration: 400,
+            useNativeDriver: true,
+          }),
+          Animated.timing(textTranslateX, {
             toValue: 0,
-            duration: 200,
+            duration: 400,
+            useNativeDriver: true,
+          }),
+          Animated.timing(textScale, {
+            toValue: 1,
+            duration: 400,
             useNativeDriver: true,
           }),
         ]).start(() => {
-          // 动画完成后更新步骤
-          setCurrentStep(nextIndex);
-          // 优雅的 fadeIn 动画
-          Animated.parallel([
-            Animated.timing(fadeOpacity, {
-              toValue: 1,
-              duration: 400,
-              useNativeDriver: true,
-            }),
-            Animated.timing(textOpacity, {
-              toValue: 1,
-              duration: 400,
-              useNativeDriver: true,
-            }),
-            Animated.timing(textTranslateX, {
-              toValue: 0,
-              duration: 400,
-              useNativeDriver: true,
-            }),
-            Animated.timing(textScale, {
-              toValue: 1,
-              duration: 400,
-              useNativeDriver: true,
-            }),
-          ]).start(() => {
-            // 开始打字效果
-            startTypingEffect();
-          });
+          // 开始打字效果
+          startTypingEffect(nextIndex);
         });
+      });
 
       scrollRef.current?.scrollTo({
         x: nextIndex * width,
@@ -160,27 +169,28 @@ const OnboardingScreen = observer(() => {
           }),
         ]).start(() => {
           // 开始打字效果
-          startTypingEffect();
+          startTypingEffect(index);
         });
       });
     }
   };
 
-  const startTypingEffect = () => {
-    const currentStepData = onboardingSteps[currentStep];
+  const startTypingEffect = _currentStep => {
+    const currentStepData = onboardingSteps[_currentStep];
+
     const fullText = currentStepData.subtitle;
-    
+
     // 清除之前的定时器
     if (typingRef.current) {
       clearInterval(typingRef.current);
     }
-    
+
     // 停止之前的动画
     cursorOpacity.stopAnimation();
     setDisplayedText('');
     setIsTyping(true);
     currentIndexRef.current = 0;
-    
+
     // 开始光标闪烁动画
     const cursorAnimation = Animated.loop(
       Animated.sequence([
@@ -194,10 +204,10 @@ const OnboardingScreen = observer(() => {
           duration: 500,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
     cursorAnimation.start();
-    
+
     const typeInterval = setInterval(() => {
       if (currentIndexRef.current < fullText.length) {
         setDisplayedText(fullText.slice(0, currentIndexRef.current + 1));
@@ -210,96 +220,78 @@ const OnboardingScreen = observer(() => {
         typingRef.current = null;
       }
     }, 30);
-    
+
     typingRef.current = typeInterval;
   };
 
   // 监听语言变化，重新开始打字效果
   useEffect(() => {
     if (!isTyping) {
-      startTypingEffect();
+      startTypingEffect(currentStep);
     }
   }, [t]);
 
-  const renderRadialMenu = () => (
-    <View style={styles.radialContainer}>
-      <View style={styles.centralButton}>
-        <View style={styles.centralIcon}>
-          <Text style={styles.centralIconText}>🎤</Text>
-        </View>
-      </View>
-
-      {/* 径向菜单按钮 */}
-      <View style={styles.radialButtons}>
-        <TouchableOpacity style={[styles.radialButton, styles.topLeft]}>
-          <Text style={styles.radialButtonText}>转录</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.radialButton, styles.topRight]}>
-          <Text style={styles.radialButtonText}>总结</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.radialButton, styles.bottomLeft]}>
-          <Text style={styles.radialButtonText}>AI 聊天</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.radialButton, styles.bottomRight]}>
-          <Text style={styles.radialButtonText}>翻译</Text>
-        </TouchableOpacity>
-      </View>
+  const renderEmpower = () => (
+    <View style={styles.welcomeContainer}>
+      <LottieView
+        ref={animationRef}
+        source={require('../lottie/IdeaAnimation.json')}
+        autoPlay
+        loop
+        style={{width: 300, height: 300}}
+      />
+      <Text style={styles.welcomeText}>{t('onboarding.step4.subtitle')}</Text>
     </View>
   );
 
-  const renderWaveform = () => (
-    <View style={styles.waveformContainer}>
-      <View style={styles.transcriptionArea}>
-        <View style={styles.transcriptionBubble}>
-          <Text style={styles.speakerText}>演讲者1 0:10</Text>
-          <Text style={styles.transcriptionText}>
-            欢迎来到今天的教程课程。我们将介绍如何设置项目的基本步骤。
-          </Text>
-        </View>
-        <View style={styles.transcriptionBubble}>
-          <Text style={styles.speakerText}>演讲者2 0:47</Text>
-          <Text style={styles.transcriptionText}>
-            所以，首先您需要确保已安装所有软件。
-          </Text>
-        </View>
-      </View>
+  const renderDataSafe = () => (
+    <View style={styles.welcomeContainer}>
+      <LottieView
+        ref={animationRef}
+        source={require('../lottie/IdeaAnimation.json')}
+        autoPlay
+        loop
+        style={{width: 300, height: 300}}
+      />
+      <Text style={styles.welcomeText}>{t('onboarding.step3.subtitle')}</Text>
     </View>
   );
 
-  const renderSummary = () => (
-    <View style={styles.summaryContainer}>
-      <View style={styles.summaryCard}>
-        <View style={styles.summaryHeader}>
-          <Text style={styles.summaryTitle}>60分钟</Text>
-        </View>
-        <View style={styles.summaryContent}>
-          <Text style={styles.summaryLabel}>教程录制</Text>
-        </View>
-      </View>
-
-      <View style={styles.summaryButtons}>
-        <TouchableOpacity style={styles.summaryButton}>
-          <Text style={styles.summaryButtonText}>简短总结</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.summaryButton}>
-          <Text style={styles.summaryButtonText}>行动要点</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.summaryButton}>
-          <Text style={styles.summaryButtonText}>关键主题</Text>
-        </TouchableOpacity>
-      </View>
+  const renderRecord = () => (
+    <View style={styles.welcomeContainer}>
+      <LottieView
+        ref={animationRef}
+        source={require('../lottie/IdeaAnimation.json')}
+        autoPlay
+        loop
+        style={{width: 300, height: 300}}
+      />
+      <Text style={styles.welcomeText}>{t('onboarding.step2.subtitle')}</Text>
     </View>
   );
 
+  const renderWelcome = () => (
+    <View style={styles.welcomeContainer}>
+      <LottieView
+        ref={animationRef}
+        source={require('../lottie/IdeaAnimation.json')}
+        autoPlay
+        loop
+        style={{width: 300, height: 300}}
+      />
+      <Text style={styles.welcomeText}>{t('onboarding.step1.subtitle')}</Text>
+    </View>
+  );
 
   const renderTopContent = index => {
     const currentStepData = onboardingSteps[index];
 
     return (
       <View style={styles.topSection}>
-        {currentStepData.showRadialMenu && renderRadialMenu()}
-        {currentStepData.showWaveform && renderWaveform()}
-        {currentStepData.showSummary && renderSummary()}
+        {currentStepData.showWelcome && renderWelcome()}
+        {currentStepData.showRecord && renderRecord()}
+        {currentStepData.showDataSafe && renderDataSafe()}
+        {currentStepData.showEmpower && renderEmpower()}
       </View>
     );
   };
@@ -310,30 +302,45 @@ const OnboardingScreen = observer(() => {
     return (
       <View style={styles.bottomContentContainer}>
         {/* 文字区域 */}
-        <Animated.View 
+        <Animated.View
           style={[
             styles.textContainer,
             {
               opacity: textOpacity,
-              transform: [
-                {translateX: textTranslateX},
-                {scale: textScale},
-              ],
-            }
-          ]}
-        >
-          <Text style={styles.bottomTitle}>{currentStepData.title}</Text>
+              transform: [{translateX: textTranslateX}, {scale: textScale}],
+            },
+          ]}>
+          <Text
+            style={[
+              styles.bottomTitle,
+              {
+                color:
+                  themeStore?.currentTheme?.colors?.neutral?.black || '#000000',
+              },
+            ]}>
+            {currentStepData.title}
+          </Text>
           <View style={styles.subtitleContainer}>
-            <Text style={styles.bottomSubtitle}>
+            <Text
+              style={[
+                styles.bottomSubtitle,
+                {
+                  color:
+                    themeStore?.currentTheme?.colors?.neutral?.darkGray ||
+                    '#1C1C1E',
+                },
+              ]}>
               {displayedText}
             </Text>
             {isTyping && (
-              <Animated.View 
+              <Animated.View
                 style={[
                   styles.cursor,
                   {
                     opacity: cursorOpacity,
-                  }
+                    backgroundColor:
+                      themeStore?.currentTheme?.colors?.primary || '#007AFF',
+                  },
                 ]}
               />
             )}
@@ -341,25 +348,25 @@ const OnboardingScreen = observer(() => {
         </Animated.View>
 
         {/* 按钮区域 */}
-        <Animated.View 
+        <Animated.View
           style={[
             styles.buttonContainer,
             {
               opacity: fadeOpacity,
               transform: [
-                {scale: fadeOpacity.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0.9, 1],
-                })},
+                {
+                  scale: fadeOpacity.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0.9, 1],
+                  }),
+                },
               ],
-            }
-          ]}
-        >
-          <TouchableOpacity 
-            style={styles.smallButton} 
+            },
+          ]}>
+          <TouchableOpacity
+            style={styles.smallButton}
             onPress={handleNext}
-            activeOpacity={0.7}
-          >
+            activeOpacity={0.7}>
             <Text style={styles.smallButtonText}>
               {currentStepData.buttonText}
             </Text>
@@ -416,12 +423,14 @@ const OnboardingScreen = observer(() => {
             <Animated.View
               key={index}
               style={[
-                styles.lineIndicator, 
+                styles.lineIndicator,
                 {
                   width,
                   opacity,
                   transform: [{scale}],
-                }
+                  backgroundColor:
+                    themeStore?.currentTheme?.colors?.primary || '#007AFF',
+                },
               ]}
             />
           );
@@ -429,9 +438,22 @@ const OnboardingScreen = observer(() => {
       </View>
     );
   };
+  useEffect(() => {
+    animationRef.current?.play();
+
+    // Or set a specific startFrame and endFrame with:
+  }, []);
 
   return (
-    <BasePage barStyle={StatusBarStyles.DARK_CONTENT} style={styles.container}>
+    <BasePage
+      barStyle={themeStore?.statusBarStyle || 'dark-content'}
+      style={[
+        styles.container,
+        {
+          backgroundColor:
+            themeStore?.currentTheme?.colors?.neutral?.background || '#F2F2F7',
+        },
+      ]}>
       {/* 顶部内容区域 - 正常切换 */}
       <ScrollView
         ref={scrollRef}
@@ -446,22 +468,21 @@ const OnboardingScreen = observer(() => {
       </ScrollView>
 
       {/* 底部文字和按钮区域 */}
-      <View 
+      <View
         style={{
           position: 'absolute',
           bottom: 0,
           left: 0,
           right: 0,
           zIndex: 10,
-          paddingHorizontal: theme.spacing.lg,
-          paddingBottom: theme.spacing.xl,
+          paddingHorizontal: lightTheme.spacing.lg,
+          paddingBottom: lightTheme.spacing.xl,
           height: 200, // 固定高度
         }}
-        pointerEvents="box-none"
-      >
+        pointerEvents="box-none">
         <View pointerEvents="box-none" style={{flex: 1}} />
         <View pointerEvents="auto" style={{height: 100}}>
-          <View style={{marginBottom: theme.spacing.md}}>
+          <View style={{marginBottom: lightTheme.spacing.md}}>
             {renderAnimatedIndicators()}
           </View>
           {renderBottomContent()}
@@ -474,7 +495,6 @@ const OnboardingScreen = observer(() => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral.background,
   },
   scrollContent: {
     flexGrow: 1,
@@ -489,7 +509,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing.lg,
+    marginBottom: 120,
+    paddingHorizontal: lightTheme.spacing.lg,
   },
 
   // 底部内容容器
@@ -503,7 +524,7 @@ const styles = StyleSheet.create({
   // 文字容器
   textContainer: {
     flex: 1,
-    marginRight: theme.spacing.md,
+    marginRight: lightTheme.spacing.md,
     justifyContent: 'flex-start',
   },
 
@@ -512,8 +533,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'center',
   },
-
-
 
   // 径向菜单样式
   radialContainer: {
@@ -526,7 +545,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: lightTheme.colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -569,7 +588,7 @@ const styles = StyleSheet.create({
   bottomRight: {bottom: 20, right: 20},
   radialButtonText: {
     fontSize: 12,
-    color: theme.colors.primary,
+    color: lightTheme.colors.primary,
     fontWeight: '500',
   },
 
@@ -584,8 +603,8 @@ const styles = StyleSheet.create({
   transcriptionBubble: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: theme.spacing.md,
-    marginBottom: theme.spacing.sm,
+    padding: lightTheme.spacing.md,
+    marginBottom: lightTheme.spacing.sm,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.1,
@@ -594,13 +613,13 @@ const styles = StyleSheet.create({
   },
   speakerText: {
     fontSize: 12,
-    color: theme.colors.primary,
+    color: lightTheme.colors.primary,
     fontWeight: '500',
     marginBottom: 4,
   },
   transcriptionText: {
     fontSize: 14,
-    color: theme.colors.neutral.black,
+    color: lightTheme.colors.neutral.black,
     lineHeight: 20,
   },
 
@@ -612,8 +631,8 @@ const styles = StyleSheet.create({
   summaryCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: theme.spacing.lg,
-    marginBottom: theme.spacing.lg,
+    padding: lightTheme.spacing.lg,
+    marginBottom: lightTheme.spacing.lg,
     width: '100%',
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
@@ -623,20 +642,20 @@ const styles = StyleSheet.create({
   },
   summaryHeader: {
     alignItems: 'center',
-    marginBottom: theme.spacing.md,
+    marginBottom: lightTheme.spacing.md,
   },
   summaryTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: theme.colors.primary,
+    color: lightTheme.colors.primary,
   },
   summaryContent: {
     alignItems: 'center',
   },
   summaryLabel: {
     fontSize: 16,
-    color: theme.colors.neutral.black,
-    marginBottom: theme.spacing.sm,
+    color: lightTheme.colors.neutral.black,
+    marginBottom: lightTheme.spacing.sm,
   },
 
   summaryButtons: {
@@ -647,8 +666,8 @@ const styles = StyleSheet.create({
   summaryButton: {
     backgroundColor: '#fff',
     borderRadius: 8,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: lightTheme.spacing.md,
+    paddingVertical: lightTheme.spacing.sm,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.1,
@@ -657,7 +676,7 @@ const styles = StyleSheet.create({
   },
   summaryButtonText: {
     fontSize: 12,
-    color: theme.colors.primary,
+    color: lightTheme.colors.primary,
     fontWeight: '500',
   },
 
@@ -668,8 +687,8 @@ const styles = StyleSheet.create({
   aiChatCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: theme.spacing.lg,
-    marginBottom: theme.spacing.lg,
+    padding: lightTheme.spacing.lg,
+    marginBottom: lightTheme.spacing.lg,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
@@ -679,24 +698,24 @@ const styles = StyleSheet.create({
   aiChatHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.md,
+    marginBottom: lightTheme.spacing.md,
   },
   aiChatTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: theme.colors.primary,
+    color: lightTheme.colors.primary,
   },
   aiChatContent: {
     fontSize: 14,
-    color: theme.colors.neutral.black,
-    marginBottom: theme.spacing.sm,
+    color: lightTheme.colors.neutral.black,
+    marginBottom: lightTheme.spacing.sm,
   },
   taskList: {
-    marginTop: theme.spacing.sm,
+    marginTop: lightTheme.spacing.sm,
   },
   taskItem: {
     fontSize: 14,
-    color: theme.colors.neutral.black,
+    color: lightTheme.colors.neutral.black,
     marginBottom: 4,
   },
   questionBubbles: {
@@ -707,14 +726,14 @@ const styles = StyleSheet.create({
   questionBubble: {
     backgroundColor: '#f8f9fa',
     borderRadius: 20,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    marginBottom: theme.spacing.sm,
+    paddingHorizontal: lightTheme.spacing.md,
+    paddingVertical: lightTheme.spacing.sm,
+    marginBottom: lightTheme.spacing.sm,
     width: '48%',
   },
   questionText: {
     fontSize: 12,
-    color: theme.colors.neutral.darkGray,
+    color: lightTheme.colors.neutral.darkGray,
     textAlign: 'center',
   },
 
@@ -722,9 +741,8 @@ const styles = StyleSheet.create({
   bottomTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: theme.colors.neutral.black,
     textAlign: 'left',
-    marginBottom: theme.spacing.xs,
+    marginBottom: lightTheme.spacing.xs,
   },
   subtitleContainer: {
     flexDirection: 'row',
@@ -732,24 +750,20 @@ const styles = StyleSheet.create({
   },
   bottomSubtitle: {
     fontSize: 14,
-    color: theme.colors.neutral.darkGray,
     textAlign: 'left',
     lineHeight: 20,
   },
   cursor: {
     width: 2,
     height: 16,
-    backgroundColor: theme.colors.primary,
     marginLeft: 2,
     borderRadius: 1,
   },
-
-
   smallButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: lightTheme.colors.primary,
     borderRadius: 8,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: lightTheme.spacing.md,
+    paddingVertical: lightTheme.spacing.sm,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.1,
@@ -762,7 +776,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-
+  // 欢迎页样式
+  welcomeContainer: {
+    flex: 1,
+    alignItems: 'center',
+    marginTop: height / 2 - 270,
+  },
+  welcomeText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: lightTheme.colors.primary,
+    textAlign: 'center',
+  },
 
   indicatorsContainer: {
     flexDirection: 'row',
@@ -771,7 +796,7 @@ const styles = StyleSheet.create({
   lineIndicator: {
     height: 3,
     borderRadius: 1.5,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: lightTheme.colors.primary,
     marginRight: 8,
   },
 });

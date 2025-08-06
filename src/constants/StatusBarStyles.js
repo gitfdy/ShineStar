@@ -18,9 +18,9 @@ export const StatusBarStyles = {
  * 可以根据不同页面的需求快速应用
  */
 export const StatusBarConfigs = {
-  // 默认配置 - 透明背景，自动样式
+  // 默认配置 - 浅色主题，透明背景，深色内容
   DEFAULT: {
-    barStyle: StatusBarStyles.DEFAULT,
+    barStyle: StatusBarStyles.DARK_CONTENT,
     backgroundColor: 'transparent',
     translucent: true,
   },

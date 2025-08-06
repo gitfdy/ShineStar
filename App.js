@@ -17,7 +17,7 @@ import './src/i18n/index.js';
 import { initializeLanguage, useSystemLanguage } from './src/utils/languageUtils';
 
 const AppContent = observer(() => {
-  const { appStore } = useStore();
+  const { appStore, themeStore } = useStore();
 
   useEffect(() => {
     // 初始化语言设置
@@ -38,7 +38,7 @@ const AppContent = observer(() => {
 
   // 显示主应用
   return (
-    <BasePage barStyle={StatusBarStyles.LIGHT_CONTENT}>
+    <BasePage barStyle={themeStore?.statusBarStyle || 'dark-content'}>
       <AppNavigator />
     </BasePage>
   );

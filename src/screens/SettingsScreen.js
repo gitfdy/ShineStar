@@ -2,50 +2,41 @@ import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Switch } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '../stores/StoreProvider';
+import ThemeToggle from '../components/ThemeToggle';
 
 const SettingsScreen = () => {
-  const { settingsStore } = useStore();
+  const { settingsStore, themeStore } = useStore();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, {backgroundColor: themeStore?.currentTheme?.colors?.neutral?.background || '#F2F2F7'}]}>
       <View style={styles.content}>
-        <Text style={styles.title}>设置</Text>
+        <Text style={[styles.title, {color: themeStore?.currentTheme?.colors?.neutral?.black || '#000000'}]}>设置</Text>
         
-        <View style={styles.settingItem}>
-          <View style={styles.settingInfo}>
-            <Text style={styles.settingLabel}>深色模式</Text>
-            <Text style={styles.settingDescription}>始终使用深色主题</Text>
-          </View>
-          <Switch
-            value={settingsStore.isDarkMode}
-            onValueChange={settingsStore.setDarkMode}
-            trackColor={{ false: '#333', true: '#007AFF' }}
-            thumbColor={settingsStore.isDarkMode ? '#fff' : '#f4f3f4'}
-          />
-        </View>
+        {/* 主题切换 */}
+        <ThemeToggle />
 
-        <View style={styles.settingItem}>
+        <View style={[styles.settingItem, {backgroundColor: themeStore?.currentTheme?.colors?.neutral?.lightGray || '#E5E5EA'}]}>
           <View style={styles.settingInfo}>
-            <Text style={styles.settingLabel}>通知</Text>
-            <Text style={styles.settingDescription}>接收推送通知</Text>
+            <Text style={[styles.settingLabel, {color: themeStore?.currentTheme?.colors?.neutral?.black || '#000000'}]}>通知</Text>
+            <Text style={[styles.settingDescription, {color: themeStore?.currentTheme?.colors?.neutral?.gray || '#8E8E93'}]}>接收推送通知</Text>
           </View>
           <Switch
             value={settingsStore.notificationsEnabled}
             onValueChange={settingsStore.setNotificationsEnabled}
-            trackColor={{ false: '#333', true: '#007AFF' }}
+            trackColor={{ false: themeStore?.currentTheme?.colors?.neutral?.lightGray || '#E5E5EA', true: themeStore?.currentTheme?.colors?.primary || '#007AFF' }}
             thumbColor={settingsStore.notificationsEnabled ? '#fff' : '#f4f3f4'}
           />
         </View>
 
-        <View style={styles.settingItem}>
+        <View style={[styles.settingItem, {backgroundColor: themeStore?.currentTheme?.colors?.neutral?.lightGray || '#E5E5EA'}]}>
           <View style={styles.settingInfo}>
-            <Text style={styles.settingLabel}>自动保存</Text>
-            <Text style={styles.settingDescription}>自动保存数据</Text>
+            <Text style={[styles.settingLabel, {color: themeStore?.currentTheme?.colors?.neutral?.black || '#000000'}]}>自动保存</Text>
+            <Text style={[styles.settingDescription, {color: themeStore?.currentTheme?.colors?.neutral?.gray || '#8E8E93'}]}>自动保存数据</Text>
           </View>
           <Switch
             value={settingsStore.autoSave}
             onValueChange={settingsStore.setAutoSave}
-            trackColor={{ false: '#333', true: '#007AFF' }}
+            trackColor={{ false: themeStore?.currentTheme?.colors?.neutral?.lightGray || '#E5E5EA', true: themeStore?.currentTheme?.colors?.primary || '#007AFF' }}
             thumbColor={settingsStore.autoSave ? '#fff' : '#f4f3f4'}
           />
         </View>
@@ -57,7 +48,6 @@ const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
   },
   content: {
     flex: 1,
@@ -66,7 +56,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
     marginBottom: 30,
     textAlign: 'center',
   },
@@ -74,7 +63,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
     padding: 20,
     borderRadius: 10,
     marginBottom: 15,
@@ -85,13 +73,11 @@ const styles = StyleSheet.create({
   },
   settingLabel: {
     fontSize: 16,
-    color: '#fff',
     fontWeight: '500',
     marginBottom: 5,
   },
   settingDescription: {
     fontSize: 14,
-    color: '#888',
   },
 });
 

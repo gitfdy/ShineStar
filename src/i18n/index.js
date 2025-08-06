@@ -1,5 +1,5 @@
 import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import {initReactI18next} from 'react-i18next';
 import * as RNLocalize from 'react-native-localize';
 
 // 中文翻译
@@ -7,7 +7,7 @@ const zhCN = {
   onboarding: {
     step1: {
       title: '欢迎来到 ShineStar',
-      subtitle: '将语音转录为文本，快速、轻松、无忧地获取即时笔记！',
+      subtitle: '如果你有一个好主意？',
       buttonText: '开始使用',
     },
     step2: {
@@ -16,9 +16,14 @@ const zhCN = {
       buttonText: '继续',
     },
     step3: {
-      title: '将数小时总结为数分钟',
-      subtitle: '一键获取自动摘要、行动项目和关键主题见解！',
+      title: '数据动向',
+      subtitle: '全都在本地存储，无需担心隐私泄露！',
       buttonText: '继续',
+    },
+    step4: {
+      title: '助力你',
+      subtitle: '使用强大的 AI 赋能，让想法变为现实！',
+      buttonText: '开始闪光',
     },
   },
   common: {
@@ -31,18 +36,24 @@ const enUS = {
   onboarding: {
     step1: {
       title: 'Welcome to ShineStar',
-      subtitle: 'Transform voice to text, get instant notes quickly, easily, and worry-free!',
+      subtitle: 'If you have a good idea?',
       buttonText: 'Get Started',
     },
     step2: {
       title: 'Record and Transcribe Instantly',
-      subtitle: 'Accurate transcription with timestamps and speaker identification',
+      subtitle:
+        'Accurate transcription with timestamps and speaker identification',
       buttonText: 'Continue',
     },
     step3: {
-      title: 'Summarize Hours into Minutes',
-      subtitle: 'Get automatic summaries, action items, and key insights with one click!',
+      title: 'Data Movement',
+      subtitle: 'All stored locally, no need to worry about privacy leaks!',
       buttonText: 'Continue',
+    },
+    step4: {
+      title: 'Empower You',
+      subtitle: 'Use powerful AI to make your ideas a reality!',
+      buttonText: 'Start Shining',
     },
   },
   common: {
@@ -66,12 +77,12 @@ const getSystemLanguage = () => {
     const systemLocale = locales[0];
     const languageCode = systemLocale.languageCode;
     const countryCode = systemLocale.countryCode;
-    
+
     // 检查是否支持该语言
     const supportedLanguages = ['zh-CN', 'en-US'];
     const fullLocale = `${languageCode}-${countryCode}`;
     const shortLocale = languageCode;
-    
+
     // 优先匹配完整语言代码，然后匹配语言代码
     if (supportedLanguages.includes(fullLocale)) {
       return fullLocale;
@@ -83,22 +94,20 @@ const getSystemLanguage = () => {
       return 'en-US'; // 英文变体都映射到美式英文
     }
   }
-  
+
   return 'zh-CN'; // 默认回退到中文
 };
 
-i18n
-  .use(initReactI18next)
-  .init({
-    resources,
-    lng: getSystemLanguage(), // 根据系统语言设置
-    fallbackLng: 'zh-CN',
-    interpolation: {
-      escapeValue: false, // React 已经转义了
-    },
-    react: {
-      useSuspense: false,
-    },
-  });
+i18n.use(initReactI18next).init({
+  resources,
+  lng: getSystemLanguage(), // 根据系统语言设置
+  fallbackLng: 'zh-CN',
+  interpolation: {
+    escapeValue: false, // React 已经转义了
+  },
+  react: {
+    useSuspense: false,
+  },
+});
 
-export default i18n; 
+export default i18n;
