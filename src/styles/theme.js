@@ -2,10 +2,10 @@
 export const theme = {
   // 颜色系统
   colors: {
-    primary: '#007AFF',      // 科技蓝 - 主要操作
-    secondary: '#FF9500',    // 活力橙 - 次要操作
-    success: '#34C759',      // 成功绿 - 成功状态
-    error: '#FF3B30',        // 错误红 - 错误状态
+    primary: '#6366F1',      // 现代科技紫 - 主要操作
+    secondary: '#10B981',    // 科技绿 - 次要操作
+    success: '#059669',      // 成功绿 - 成功状态
+    error: '#DC2626',        // 错误红 - 错误状态
     
     // 中性色
     neutral: {
@@ -19,35 +19,35 @@ export const theme = {
 
   // 字体系统
   typography: {
-    h1: {
-      fontSize: 32,
-      fontWeight: 'bold',
-      lineHeight: 40
-    },
     h2: {
       fontSize: 24,
       fontWeight: 'bold',
-      lineHeight: 32
+      lineHeight: 32,
+      fontFamily: 'SFProDisplay-Bold', // Custom font for headers
     },
     h3: {
       fontSize: 20,
       fontWeight: '600',
-      lineHeight: 28
+      lineHeight: 28,
+      fontFamily: 'SFProDisplay-Semibold',
     },
     body: {
       fontSize: 16,
       fontWeight: 'normal',
-      lineHeight: 24
+      lineHeight: 24,
+      fontFamily: 'SFProText-Regular',
     },
     caption: {
       fontSize: 14,
       fontWeight: 'normal',
-      lineHeight: 20
+      lineHeight: 20,
+      fontFamily: 'SFProText-Regular',
     },
     small: {
       fontSize: 12,
       fontWeight: 'normal',
-      lineHeight: 16
+      lineHeight: 16,
+      fontFamily: 'SFProText-Regular',
     }
   },
 
@@ -92,6 +92,7 @@ export const darkTheme = {
   ...theme,
   colors: {
     ...theme.colors,
+    primary: '#8B5CF6', // 更亮的科技紫，在深色背景下更突出
     // 深色主题中性色
     neutral: {
       black: '#FFFFFF',      // 主要文字 - 白色
@@ -119,6 +120,14 @@ export const getTheme = (themeType) => {
     default:
       return lightTheme; // 默认使用浅色主题
   }
+};
+
+// 获取当前主题的便捷函数
+export const getCurrentThemeConfig = (themeStore) => {
+  if (!themeStore) {
+    return lightTheme;
+  }
+  return themeStore.currentTheme || lightTheme;
 };
 
 export default lightTheme; // 默认导出浅色主题 

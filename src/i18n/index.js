@@ -6,24 +6,28 @@ import * as RNLocalize from 'react-native-localize';
 const zhCN = {
   onboarding: {
     step1: {
-      title: '欢迎来到 ShineStar',
-      subtitle: '如果你有一个好主意？',
-      buttonText: '开始使用',
+      title: '欢迎使用 ShineStar',
+      subtitle: '有想法？我们来帮你实现',
+      description: 'ShineStar 是一个帮助你将创意转化为现实的智能应用',
+      buttonText: '开始体验',
     },
     step2: {
-      title: '立即录音与转录',
-      subtitle: '准确的转录，带时间戳和说话者识别',
+      title: '智能录音与转写',
+      subtitle: '实时转写，精准高效',
+      description: '通过智能录音功能，轻松捕捉你的想法并将其转化为文字',
       buttonText: '继续',
     },
     step3: {
-      title: '数据动向',
-      subtitle: '全都在本地存储，无需担心隐私泄露！',
+      title: '隐私安全',
+      subtitle: '本地存储，安全无忧',
+      description: '我们重视你的隐私，所有数据都安全存储在你的设备上',
       buttonText: '继续',
     },
     step4: {
-      title: '助力你',
-      subtitle: '使用强大的 AI 赋能，让想法变为现实！',
-      buttonText: '开始闪光',
+      title: 'AI 智能助手',
+      subtitle: 'AI 助力创意腾飞',
+      description: '借助 AI 技术，ShineStar 可以帮助你优化和扩展你的想法',
+      buttonText: '开始使用',
     },
   },
   common: {
@@ -36,24 +40,27 @@ const enUS = {
   onboarding: {
     step1: {
       title: 'Welcome to ShineStar',
-      subtitle: 'If you have a good idea?',
+      subtitle: 'Got an idea? We’ll assist',
+      description: 'ShineStar is an intelligent app that helps turn your creativity into reality',
       buttonText: 'Get Started',
     },
     step2: {
-      title: 'Record and Transcribe Instantly',
-      subtitle:
-        'Accurate transcription with timestamps and speaker identification',
+      title: 'Smart Recording & Transcription',
+      subtitle: 'Real-time, precise transcription',
+      description: 'Capture your thoughts effortlessly with smart recording and convert them to text',
       buttonText: 'Continue',
     },
     step3: {
-      title: 'Data Movement',
-      subtitle: 'All stored locally, no need to worry about privacy leaks!',
+      title: 'Privacy & Security',
+      subtitle: 'Local storage, worry-free',
+      description: 'We value your privacy; all data is securely stored on your device',
       buttonText: 'Continue',
     },
     step4: {
-      title: 'Empower You',
-      subtitle: 'Use powerful AI to make your ideas a reality!',
-      buttonText: 'Start Shining',
+      title: 'AI Smart Assistant',
+      subtitle: 'AI empowers your creativity',
+      description: 'With AI technology, ShineStar can help refine and expand your ideas',
+      buttonText: 'Start Using',
     },
   },
   common: {

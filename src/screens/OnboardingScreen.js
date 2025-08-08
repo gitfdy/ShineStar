@@ -7,14 +7,14 @@ import {
   Dimensions,
   ScrollView,
   Animated,
+  ImageBackground
 } from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {useStore} from '../stores/StoreProvider';
-import {lightTheme} from '../styles/theme';
 import BasePage from '../components/BasePage';
-import {StatusBarStyles} from '../constants/StatusBarStyles';
 import {useTranslation} from 'react-i18next';
 import LottieView from 'lottie-react-native';
+import { getCurrentTheme, getThemeColor, getThemeSpacing } from '../utils/themeUtils';
 
 const {width, height} = Dimensions.get('window');
 
@@ -35,6 +35,128 @@ const OnboardingScreen = observer(() => {
   const currentIndexRef = useRef(0);
   const animationRef = useRef(null);
 
+  // 获取当前主题
+  const currentTheme = getCurrentTheme(themeStore);
+
+  // 动态生成样式
+  const getStyles = () => {
+    return {
+      container: {
+        flex: 1,
+      },
+      scrollContent: {
+        flexGrow: 1,
+      },
+      stepContainer: {
+        width: width,
+        flex: 1,
+      },
+      topSection: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 120,
+        paddingHorizontal: getThemeSpacing(themeStore, 'lg'),
+      },
+      bottomContentContainer: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        height: 100,
+      },
+      textContainer: {
+        flex: 1,
+        marginRight: getThemeSpacing(themeStore, 'md'),
+        justifyContent: 'flex-start',
+      },
+      buttonContainer: {
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+      },
+      bottomTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: 'left',
+        marginBottom: getThemeSpacing(themeStore, 'xs'),
+        color: getThemeColor(themeStore, 'neutral.black'),
+      
+      },
+      bottomSubtitle: {
+        fontSize: 16,
+        textAlign: 'left',
+        lineHeight: 22,
+        marginBottom: getThemeSpacing(themeStore, 'xs'),
+        color: getThemeColor(themeStore, 'neutral.darkGray'),
+     
+      },
+      smallButton: {
+        backgroundColor: getThemeColor(themeStore, 'primary'),
+        borderRadius: 12,
+        paddingHorizontal: getThemeSpacing(themeStore, 'md'),
+        paddingVertical: getThemeSpacing(themeStore, 'sm'),
+        shadowColor: getThemeColor(themeStore, 'primary'),
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4,
+      },
+      smallButtonText: {
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: '600',
+      },
+      welcomeContainer: {
+        flex: 1,
+        alignItems: 'center',
+        marginTop: height / 2 - 270,
+        opacity: 0.9,
+      },
+      welcomeText: {
+        fontSize: 20,
+        fontWeight: '500',
+        color: getThemeColor(themeStore, 'neutral.darkGray'),
+        textAlign: 'center',
+        opacity: 0.8,
+        marginTop: 16,
+        fontFamily: 'Courier Prime',
+        lineHeight: 30,
+      },
+      indicatorsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+      },
+      lineIndicator: {
+        height: 4,
+        borderRadius: 2,
+        backgroundColor: getThemeColor(themeStore, 'primary'),
+        marginRight: 8,
+        shadowColor: getThemeColor(themeStore, 'primary'),
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 2,
+      },
+      waveContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: width*3,
+        height: width*3,
+        overflow: 'hidden',
+        opacity: 0.06,
+      },
+      waveAnimation: {
+        width: width*3,
+        height: width*3,
+        position: 'absolute',
+        left: 0,
+        top: -width*1.5,
+      },
+    };
+  };
+
+  const styles = getStyles();
+
   // 初始化打字效果
   useEffect(() => {
     startTypingEffect(currentStep);
@@ -52,29 +174,37 @@ const OnboardingScreen = observer(() => {
       id: 0,
       title: t('onboarding.step1.title'),
       subtitle: t('onboarding.step1.subtitle'),
+      description: t('onboarding.step1.description'),
       buttonText: t('onboarding.step1.buttonText'),
       showWelcome: true,
+      icon: 'idea'
     },
     {
       id: 1,
       title: t('onboarding.step2.title'),
       subtitle: t('onboarding.step2.subtitle'),
+      description: t('onboarding.step2.description'),
       buttonText: t('onboarding.step2.buttonText'),
       showRecord: true,
+      icon: 'record'
     },
     {
       id: 2,
       title: t('onboarding.step3.title'),
       subtitle: t('onboarding.step3.subtitle'),
+      description: t('onboarding.step3.description'),
       buttonText: t('onboarding.step3.buttonText'),
       showDataSafe: true,
+      icon: 'security'
     },
     {
       id: 3,
       title: t('onboarding.step4.title'),
       subtitle: t('onboarding.step4.subtitle'),
+      description: t('onboarding.step4.description'),
       buttonText: t('onboarding.step4.buttonText'),
       showEmpower: true,
+      icon: 'ai'
     },
   ];
 
@@ -235,12 +365,12 @@ const OnboardingScreen = observer(() => {
     <View style={styles.welcomeContainer}>
       <LottieView
         ref={animationRef}
-        source={require('../lottie/IdeaAnimation.json')}
+        source={require('../lottie/HandshakeAnimation.json')}
         autoPlay
         loop
         style={{width: 300, height: 300}}
       />
-      <Text style={styles.welcomeText}>{t('onboarding.step4.subtitle')}</Text>
+      <Text style={styles.welcomeText}>{t('onboarding.step4.description')}</Text>
     </View>
   );
 
@@ -248,12 +378,12 @@ const OnboardingScreen = observer(() => {
     <View style={styles.welcomeContainer}>
       <LottieView
         ref={animationRef}
-        source={require('../lottie/IdeaAnimation.json')}
+        source={require('../lottie/SecurityAnimation.json')}
         autoPlay
         loop
         style={{width: 300, height: 300}}
       />
-      <Text style={styles.welcomeText}>{t('onboarding.step3.subtitle')}</Text>
+      <Text style={styles.welcomeText}>{t('onboarding.step3.description')}</Text>
     </View>
   );
 
@@ -261,12 +391,12 @@ const OnboardingScreen = observer(() => {
     <View style={styles.welcomeContainer}>
       <LottieView
         ref={animationRef}
-        source={require('../lottie/IdeaAnimation.json')}
+        source={require('../lottie/IllustrationAnimation.json')}
         autoPlay
         loop
         style={{width: 300, height: 300}}
       />
-      <Text style={styles.welcomeText}>{t('onboarding.step2.subtitle')}</Text>
+      <Text style={styles.welcomeText}>{t('onboarding.step2.description')}</Text>
     </View>
   );
 
@@ -279,7 +409,7 @@ const OnboardingScreen = observer(() => {
         loop
         style={{width: 300, height: 300}}
       />
-      <Text style={styles.welcomeText}>{t('onboarding.step1.subtitle')}</Text>
+      <Text style={styles.welcomeText}>{t('onboarding.step1.description')}</Text>
     </View>
   );
 
@@ -310,41 +440,12 @@ const OnboardingScreen = observer(() => {
               transform: [{translateX: textTranslateX}, {scale: textScale}],
             },
           ]}>
-          <Text
-            style={[
-              styles.bottomTitle,
-              {
-                color:
-                  themeStore?.currentTheme?.colors?.neutral?.black || '#000000',
-              },
-            ]}>
+          <Text style={styles.bottomTitle}>
             {currentStepData.title}
           </Text>
-          <View style={styles.subtitleContainer}>
-            <Text
-              style={[
-                styles.bottomSubtitle,
-                {
-                  color:
-                    themeStore?.currentTheme?.colors?.neutral?.darkGray ||
-                    '#1C1C1E',
-                },
-              ]}>
-              {displayedText}
-            </Text>
-            {isTyping && (
-              <Animated.View
-                style={[
-                  styles.cursor,
-                  {
-                    opacity: cursorOpacity,
-                    backgroundColor:
-                      themeStore?.currentTheme?.colors?.primary || '#007AFF',
-                  },
-                ]}
-              />
-            )}
-          </View>
+          <Text style={styles.bottomSubtitle}>
+            {currentStepData.subtitle}
+          </Text>
         </Animated.View>
 
         {/* 按钮区域 */}
@@ -352,12 +453,11 @@ const OnboardingScreen = observer(() => {
           style={[
             styles.buttonContainer,
             {
-              opacity: fadeOpacity,
               transform: [
                 {
-                  scale: fadeOpacity.interpolate({
+                  scaleX: fadeOpacity.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [0.9, 1],
+                    outputRange: [1, 1],
                   }),
                 },
               ],
@@ -367,9 +467,15 @@ const OnboardingScreen = observer(() => {
             style={styles.smallButton}
             onPress={handleNext}
             activeOpacity={0.7}>
-            <Text style={styles.smallButtonText}>
+            <Animated.Text 
+              style={[
+                styles.smallButtonText,
+                {
+                  opacity: fadeOpacity,
+                },
+              ]}>
               {currentStepData.buttonText}
-            </Text>
+            </Animated.Text>
           </TouchableOpacity>
         </Animated.View>
       </View>
@@ -429,7 +535,7 @@ const OnboardingScreen = observer(() => {
                   opacity,
                   transform: [{scale}],
                   backgroundColor:
-                    themeStore?.currentTheme?.colors?.primary || '#007AFF',
+                    getThemeColor(themeStore, 'primary'),
                 },
               ]}
             />
@@ -444,16 +550,40 @@ const OnboardingScreen = observer(() => {
     // Or set a specific startFrame and endFrame with:
   }, []);
 
+  const backgroundTranslateX = scrollX.interpolate({
+    inputRange: [0, width * 3],
+    outputRange: [0, -width * 1.5], // Adjust multiplier for desired movement speed; 1.5 makes it move slower than the scroll
+    extrapolate: 'clamp',
+    // For elastic feel, we can use easing in the scroll handler if needed, but interpolate provides smooth translation
+  });
+
   return (
     <BasePage
       barStyle={themeStore?.statusBarStyle || 'dark-content'}
       style={[
         styles.container,
         {
-          backgroundColor:
-            themeStore?.currentTheme?.colors?.neutral?.background || '#F2F2F7',
+          backgroundColor: getThemeColor(themeStore, 'neutral.background'),
         },
       ]}>
+      {/* Dynamic Background */}
+      <View 
+        style={styles.waveContainer}
+      >
+        <LottieView
+          source={require('../lottie/WaveAnimation.json')}
+          autoPlay
+          loop
+          style={styles.waveAnimation}
+          colorFilters={[
+            {
+              keypath: '*',
+              color: getThemeColor(themeStore, 'primary')
+            }
+          ]}
+        />
+      </View>
+
       {/* 顶部内容区域 - 正常切换 */}
       <ScrollView
         ref={scrollRef}
@@ -475,14 +605,14 @@ const OnboardingScreen = observer(() => {
           left: 0,
           right: 0,
           zIndex: 10,
-          paddingHorizontal: lightTheme.spacing.lg,
-          paddingBottom: lightTheme.spacing.xl,
-          height: 200, // 固定高度
+          paddingHorizontal: getThemeSpacing(themeStore, 'lg'),
+          paddingBottom: getThemeSpacing(themeStore, 'xl'),
+          height: 200,
         }}
         pointerEvents="box-none">
         <View pointerEvents="box-none" style={{flex: 1}} />
         <View pointerEvents="auto" style={{height: 100}}>
-          <View style={{marginBottom: lightTheme.spacing.md}}>
+          <View style={{marginBottom: getThemeSpacing(themeStore, 'md')}}>
             {renderAnimatedIndicators()}
           </View>
           {renderBottomContent()}
@@ -490,315 +620,6 @@ const OnboardingScreen = observer(() => {
       </View>
     </BasePage>
   );
-});
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  stepContainer: {
-    width: width,
-    flex: 1,
-  },
-
-  // 顶部内容区域
-  topSection: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 120,
-    paddingHorizontal: lightTheme.spacing.lg,
-  },
-
-  // 底部内容容器
-  bottomContentContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    height: 80, // 固定高度
-  },
-
-  // 文字容器
-  textContainer: {
-    flex: 1,
-    marginRight: lightTheme.spacing.md,
-    justifyContent: 'flex-start',
-  },
-
-  // 按钮容器
-  buttonContainer: {
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-  },
-
-  // 径向菜单样式
-  radialContainer: {
-    width: width * 0.8,
-    height: width * 0.8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  centralButton: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: lightTheme.colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  centralIcon: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  centralIconText: {
-    fontSize: 24,
-  },
-  radialButtons: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-  },
-  radialButton: {
-    position: 'absolute',
-    width: 60,
-    height: 40,
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  topLeft: {top: 20, left: 20},
-  topRight: {top: 20, right: 20},
-  bottomLeft: {bottom: 20, left: 20},
-  bottomRight: {bottom: 20, right: 20},
-  radialButtonText: {
-    fontSize: 12,
-    color: lightTheme.colors.primary,
-    fontWeight: '500',
-  },
-
-  // 波形样式
-  waveformContainer: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  transcriptionArea: {
-    width: '100%',
-  },
-  transcriptionBubble: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: lightTheme.spacing.md,
-    marginBottom: lightTheme.spacing.sm,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  speakerText: {
-    fontSize: 12,
-    color: lightTheme.colors.primary,
-    fontWeight: '500',
-    marginBottom: 4,
-  },
-  transcriptionText: {
-    fontSize: 14,
-    color: lightTheme.colors.neutral.black,
-    lineHeight: 20,
-  },
-
-  // 总结样式
-  summaryContainer: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  summaryCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: lightTheme.spacing.lg,
-    marginBottom: lightTheme.spacing.lg,
-    width: '100%',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  summaryHeader: {
-    alignItems: 'center',
-    marginBottom: lightTheme.spacing.md,
-  },
-  summaryTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: lightTheme.colors.primary,
-  },
-  summaryContent: {
-    alignItems: 'center',
-  },
-  summaryLabel: {
-    fontSize: 16,
-    color: lightTheme.colors.neutral.black,
-    marginBottom: lightTheme.spacing.sm,
-  },
-
-  summaryButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-  },
-  summaryButton: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    paddingHorizontal: lightTheme.spacing.md,
-    paddingVertical: lightTheme.spacing.sm,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  summaryButtonText: {
-    fontSize: 12,
-    color: lightTheme.colors.primary,
-    fontWeight: '500',
-  },
-
-  // AI聊天样式
-  aiChatContainer: {
-    width: '100%',
-  },
-  aiChatCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: lightTheme.spacing.lg,
-    marginBottom: lightTheme.spacing.lg,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  aiChatHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: lightTheme.spacing.md,
-  },
-  aiChatTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: lightTheme.colors.primary,
-  },
-  aiChatContent: {
-    fontSize: 14,
-    color: lightTheme.colors.neutral.black,
-    marginBottom: lightTheme.spacing.sm,
-  },
-  taskList: {
-    marginTop: lightTheme.spacing.sm,
-  },
-  taskItem: {
-    fontSize: 14,
-    color: lightTheme.colors.neutral.black,
-    marginBottom: 4,
-  },
-  questionBubbles: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  questionBubble: {
-    backgroundColor: '#f8f9fa',
-    borderRadius: 20,
-    paddingHorizontal: lightTheme.spacing.md,
-    paddingVertical: lightTheme.spacing.sm,
-    marginBottom: lightTheme.spacing.sm,
-    width: '48%',
-  },
-  questionText: {
-    fontSize: 12,
-    color: lightTheme.colors.neutral.darkGray,
-    textAlign: 'center',
-  },
-
-  // 底部文字样式
-  bottomTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'left',
-    marginBottom: lightTheme.spacing.xs,
-  },
-  subtitleContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-  },
-  bottomSubtitle: {
-    fontSize: 14,
-    textAlign: 'left',
-    lineHeight: 20,
-  },
-  cursor: {
-    width: 2,
-    height: 16,
-    marginLeft: 2,
-    borderRadius: 1,
-  },
-  smallButton: {
-    backgroundColor: lightTheme.colors.primary,
-    borderRadius: 8,
-    paddingHorizontal: lightTheme.spacing.md,
-    paddingVertical: lightTheme.spacing.sm,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  smallButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-
-  // 欢迎页样式
-  welcomeContainer: {
-    flex: 1,
-    alignItems: 'center',
-    marginTop: height / 2 - 270,
-  },
-  welcomeText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: lightTheme.colors.primary,
-    textAlign: 'center',
-  },
-
-  indicatorsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-  },
-  lineIndicator: {
-    height: 3,
-    borderRadius: 1.5,
-    backgroundColor: lightTheme.colors.primary,
-    marginRight: 8,
-  },
 });
 
 export default OnboardingScreen;
