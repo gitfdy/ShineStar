@@ -16,6 +16,9 @@
 		793DF2779C158E923443B4E3 /* Pods_ShineStar_ShineStarTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71BB0D36088A43AE7B751189 /* Pods_ShineStar_ShineStarTests.framework */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		EB7E71458B7B49D6906924A1 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B93FAF7F749045F9A1B79E5E /* BootSplash.storyboard */; };
+		F632A82B6AAB46EA9422A3C5 /* Quicksand-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7C2ADA3A89594574815A5B9A /* Quicksand-Light.otf */; };
+		4F4E9697F12349D9903427B2 /* Courier Prime.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9FBF7C0E46EF4DC7A9E79E2F /* Courier Prime.ttf */; };
+		163E370A264D4A33991809BB /* Quicksand-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 565C474AA0854F728E51D238 /* Quicksand-Bold.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +51,9 @@
 		991EC9374B76AFF45406D0C2 /* Pods_ShineStar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ShineStar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B93FAF7F749045F9A1B79E5E /* BootSplash.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = BootSplash.storyboard; path = ShineStar/BootSplash.storyboard; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		7C2ADA3A89594574815A5B9A /* Quicksand-Light.otf */ = {isa = PBXFileReference; name = "Quicksand-Light.otf"; path = "../assets/fonts/Quicksand-Light.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		9FBF7C0E46EF4DC7A9E79E2F /* Courier Prime.ttf */ = {isa = PBXFileReference; name = "Courier Prime.ttf"; path = "../assets/fonts/Courier Prime.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		565C474AA0854F728E51D238 /* Quicksand-Bold.otf */ = {isa = PBXFileReference; name = "Quicksand-Bold.otf"; path = "../assets/fonts/Quicksand-Bold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +134,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				7B8F3BC307FF43A9AAE0F280 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -153,6 +160,17 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
+		};
+		7B8F3BC307FF43A9AAE0F280 /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				7C2ADA3A89594574815A5B9A /* Quicksand-Light.otf */,
+				9FBF7C0E46EF4DC7A9E79E2F /* Courier Prime.ttf */,
+				565C474AA0854F728E51D238 /* Quicksand-Bold.otf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -252,6 +270,9 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				EB7E71458B7B49D6906924A1 /* BootSplash.storyboard in Resources */,
 				5BB93D84636D44A88C38DA3D /* Colors.xcassets in Resources */,
+				F632A82B6AAB46EA9422A3C5 /* Quicksand-Light.otf in Resources */,
+				4F4E9697F12349D9903427B2 /* Courier Prime.ttf in Resources */,
+				163E370A264D4A33991809BB /* Quicksand-Bold.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

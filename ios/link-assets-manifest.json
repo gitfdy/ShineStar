@@ -1,0 +1,17 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/Courier Prime.ttf",
+      "sha1": "c2fe1ecdf37e1967dd5026d4c2ff6aec9d378459"
+    },
+    {
+      "path": "assets/fonts/Quicksand-Bold.otf",
+      "sha1": "ccfc43aa80b53cf2df22f9dca0bc5174f3ee8c27"
+    },
+    {
+      "path": "assets/fonts/Quicksand-Light.otf",
+      "sha1": "d953e2bcba276dfdee1fb985124cbc59f106e330"
+    }
+  ]
+}
