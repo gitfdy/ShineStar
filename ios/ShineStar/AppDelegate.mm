@@ -2,6 +2,7 @@
 
 #import <React/RCTBundleURLProvider.h>
 #import "RNBootSplash.h"
+#import <React/RCTRootView.h>
 
 @implementation AppDelegate
 
@@ -27,7 +28,6 @@
 // override this method
 - (void)customize:(RCTRootView *)rootView
 {
-  [super customize:rootView];
   [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView];
 }
 
