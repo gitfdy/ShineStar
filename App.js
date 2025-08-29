@@ -39,7 +39,7 @@ const AppContent = observer(() => {
   // 显示主应用
   return (
     <BasePage barStyle={themeStore?.statusBarStyle || 'dark-content'}>
-      <AppNavigator />
+      <AppNavigator themeStore={themeStore} />
     </BasePage>
   );
 });

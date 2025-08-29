@@ -4,7 +4,9 @@
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
         <!-- 透明状态栏配置 -->
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:fitsSystemWindows">false</item>
     </style>
@@ -15,7 +17,9 @@
         <item name="postBootSplashTheme">@style/AppTheme</item>
         <!-- 启动画面也使用透明状态栏 -->
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:fitsSystemWindows">false</item>
     </style>

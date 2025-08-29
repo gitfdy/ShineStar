@@ -24,11 +24,11 @@ const DrawerNavigator = () => {
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#1a1a1a',
+          backgroundColor: '#ffffff',
         },
-        headerTintColor: '#fff',
+        headerTintColor: '#000000',
         drawerStyle: {
-          backgroundColor: '#1a1a1a',
+          backgroundColor: '#ffffff',
         },
         drawerActiveTintColor: '#007AFF',
         drawerInactiveTintColor: '#888',
@@ -89,7 +89,7 @@ const AppNavigator = () => {
           headerShown: false,
         }}
       >
-        <Stack.Screen name="Main" component={DrawerNavigator} />
+        <Stack.Screen name="Main" component={DrawerNavigator}  />
       </Stack.Navigator>
     </NavigationContainer>
   );

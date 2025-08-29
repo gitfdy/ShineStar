@@ -34,22 +34,13 @@ class ThemeStore {
   }
 
   // 设置主题
-  setTheme = async (themeType) => {
-    if (themeType !== THEME_TYPES.LIGHT && themeType !== THEME_TYPES.DARK) {
-      console.warn('Invalid theme type:', themeType);
-      return;
-    }
-
-    runInAction(() => {
-      this.currentThemeType = themeType;
-    });
-
-    try {
-      await AsyncStorage.setItem(THEME_STORAGE_KEY, themeType);
-    } catch (error) {
-      console.error('Failed to save theme preference:', error);
-    }
-  };
+  setTheme(themeType) {
+    this.themeType = themeType;
+    this.currentTheme = getTheme(themeType);
+    this.statusBarStyle = themeType === THEME_TYPES.LIGHT ? 'dark-content' : 'light-content';
+    // 通知观察者主题已更改
+    this.notifyThemeChanged();
+  }
 
   // 切换主题
   toggleTheme = async () => {

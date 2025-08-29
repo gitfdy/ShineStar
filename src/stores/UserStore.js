@@ -1,4 +1,5 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, action, runInAction } from 'mobx';
+import DataStorage from '../utils/dataStorage';
 
 class UserStore {
   constructor() {
@@ -7,6 +8,7 @@ class UserStore {
     };
     this.isLoading = false;
     this.isAuthenticated = false;
+    this.posts = [];
     makeAutoObservable(this);
   }
 
@@ -30,6 +32,23 @@ class UserStore {
     };
     this.isAuthenticated = false;
   };
+
+  loadPosts = action(async () => {
+    const loadedPosts = await DataStorage.getPosts();
+    runInAction(() => {
+      this.posts = loadedPosts;
+    });
+  });
+
+  addPost = action(async (postData) => {
+    const newPost = await DataStorage.savePost(postData);
+    if (newPost) {
+      runInAction(() => {
+        this.posts.push(newPost);
+      });
+    }
+    return newPost;
+  });
 
   get userName() {
     return this.user.userName;

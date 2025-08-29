@@ -46,8 +46,8 @@ class AppStore {
 
       // 3. 检查引导页状态
       const onboardingStatus = await DataStorage.getText('onboarding_completed');
-      // this.setOnboardingCompleted(onboardingStatus === 'true');
-      this.setOnboardingCompleted(false);
+       this.setOnboardingCompleted(onboardingStatus === 'true');
+      // this.setOnboardingCompleted(false);
 
       // 4. 检查用户登录状态
       const userData = await DataStorage.getText(DataStorage.KEYS.USER_DATA);

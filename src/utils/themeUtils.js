@@ -1,4 +1,5 @@
 import { getCurrentThemeConfig } from '../styles/theme';
+import { useStore } from '../stores/StoreProvider';
 
 // 获取当前主题的工具函数
 export const getCurrentTheme = (themeStore) => {
@@ -35,4 +36,21 @@ export const getThemeTypography = (themeStore, typographyKey) => {
 export const getThemeBorderRadius = (themeStore, borderRadiusKey, fallback = 0) => {
   const theme = getCurrentTheme(themeStore);
   return theme?.borderRadius?.[borderRadiusKey] || fallback;
+};
+
+export const useTheme = () => {
+  const { themeStore } = useStore();
+  
+  const getColor = (colorPath) => getThemeColor(themeStore, colorPath);
+  const getSpacing = (size) => getThemeSpacing(themeStore, size);
+  const currentTheme = getCurrentTheme(themeStore);
+  
+  return {
+    colors: currentTheme.colors,
+    spacing: currentTheme.spacing,
+    getColor,
+    getSpacing,
+    theme: currentTheme,
+    statusBarStyle: themeStore?.statusBarStyle
+  };
 };
